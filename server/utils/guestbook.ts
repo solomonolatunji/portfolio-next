@@ -1,5 +1,5 @@
 import { and, eq, gt } from "drizzle-orm";
-import type { H3Event } from "nitropack/types";
+import { getCookie, getRequestURL, setCookie, type H3Event } from "h3";
 import { getDb } from "#server/db";
 import { sessions, users } from "#server/db/schema";
 import type { GuestbookEnv } from "./types";

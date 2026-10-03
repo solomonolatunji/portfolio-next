@@ -37,7 +37,7 @@ const emit = defineEmits<{
             alt=""
             class="size-full scale-125 object-cover blur-2xl"
           />
-          <div class="via-card/70 to-card absolute inset-0 bg-gradient-to-b from-transparent" />
+          <div class="via-card/70 to-card absolute inset-0 bg-linear-to-b from-transparent" />
         </div>
 
         <button
@@ -74,7 +74,7 @@ const emit = defineEmits<{
 
         <div
           v-if="nowPlaying.isPlaying"
-          class="relative z-10 -mt-4 flex justify-center"
+          class="absolute top-1/2 right-2.5 z-20 -translate-y-1/2 sm:right-3.5"
           aria-hidden="true"
         >
           <NowPlayingWaveform />

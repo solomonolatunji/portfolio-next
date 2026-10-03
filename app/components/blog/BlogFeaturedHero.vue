@@ -14,17 +14,17 @@ const sidePosts = computed<BlogPostSummary[]>(() => props.posts.slice(1, 3));
 <template>
   <section
     v-if="posts && posts.length > 0 && leadPost"
-    class="bg-card/60 border-line shadow-card mb-10 rounded-3xl border p-6"
+    class="mb-11 flex flex-col gap-5"
     aria-label="Featured Articles"
   >
-    <div class="mb-6 flex flex-wrap items-center justify-between gap-2">
+    <div class="border-line flex flex-wrap items-center justify-between gap-2 border-b pb-3">
       <div
-        class="inline-flex items-center gap-1.5 rounded-full border border-amber-400/20 bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-300"
+        class="text-ink inline-flex items-center gap-1.5 text-[0.85rem] font-bold tracking-wide uppercase"
       >
         <span>⭐</span>
         <span>Featured Stories</span>
       </div>
-      <p class="text-soft m-0 text-xs">Handpicked articles and deep-dives</p>
+      <p class="text-soft m-0 text-[0.82rem]">Handpicked articles and deep-dives</p>
     </div>
 
     <!-- Single Featured Post Layout -->
@@ -153,10 +153,10 @@ const sidePosts = computed<BlogPostSummary[]>(() => props.posts.slice(1, 3));
     </div>
 
     <!-- Triple Featured Posts Layout (1 Primary + 2 Side Stack) -->
-    <div v-else class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+    <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-[1.2fr_1fr]">
       <!-- Main Lead Article -->
       <article
-        class="group bg-card border-line hover:border-line-strong hover:bg-card-hover shadow-card flex flex-col overflow-hidden rounded-2xl border transition-all lg:col-span-7"
+        class="group bg-card from-card hover:border-line-strong hover:bg-card-hover flex flex-col overflow-hidden rounded-[14px] border border-amber-500/25 bg-linear-to-b to-white/[0.02] transition-all"
       >
         <NuxtLink
           v-if="leadPost.featuredImageUrl"
@@ -216,11 +216,11 @@ const sidePosts = computed<BlogPostSummary[]>(() => props.posts.slice(1, 3));
       </article>
 
       <!-- 2 Side Stacked Featured Articles -->
-      <div class="flex flex-col gap-4 lg:col-span-5">
+      <div class="flex flex-col gap-5">
         <article
           v-for="post in sidePosts"
           :key="post.id"
-          class="group bg-card border-line hover:border-line-strong hover:bg-card-hover shadow-card flex flex-1 flex-col rounded-2xl border p-4 transition-all"
+          class="group bg-card border-line hover:border-line-strong hover:bg-card-hover flex flex-1 flex-col overflow-hidden rounded-[14px] border p-4 transition-all"
         >
           <div class="flex flex-1 flex-col gap-2">
             <div class="text-soft flex items-center gap-2 text-xs">

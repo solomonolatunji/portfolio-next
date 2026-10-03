@@ -4,7 +4,7 @@ import ProjectsSection from "@/components/home/ProjectsSection.vue";
 </script>
 
 <template>
-  <div class="flex flex-col gap-14">
+  <div class="w-full">
     <HeroSection />
     <ProjectsSection />
   </div>

@@ -9,12 +9,12 @@ defineProps<{
 
 <template>
   <article
-    class="group bg-card border-line hover:border-line-strong hover:bg-card-hover shadow-card flex flex-col overflow-hidden rounded-2xl border transition-all"
+    class="group bg-card border-line hover:border-line-strong hover:bg-card-hover flex flex-col overflow-hidden rounded-xl border transition-all"
   >
     <NuxtLink
       v-if="post.featuredImageUrl"
       :to="`/blog/${post.slug}`"
-      class="bg-elevated block aspect-video w-full overflow-hidden"
+      class="bg-elevated block h-50 w-full overflow-hidden"
       tabindex="-1"
       aria-hidden="true"
     >

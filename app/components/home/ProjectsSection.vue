@@ -20,38 +20,42 @@ const projectLinkIcons = {
 </script>
 
 <template>
-  <section id="projects" class="mx-auto mt-16 w-full max-w-190">
-    <div class="mb-6">
-      <p class="text-soft mb-1.5 text-[0.72rem] font-bold tracking-[0.16em] uppercase">
+  <section id="projects" class="mx-auto w-full max-w-190 pt-[2.2rem] sm:pt-[2.4rem]">
+    <div class="mb-[1.1rem] flex flex-col gap-2">
+      <p class="text-soft m-0 mb-[0.7rem] text-[0.72rem] font-bold tracking-[0.16em] uppercase">
         Selected Work
       </p>
-      <h2 class="text-ink m-0 text-2xl font-bold tracking-tight">Projects</h2>
+      <h2
+        class="text-ink m-0 text-[clamp(1.6rem,3vw,2.4rem)] leading-none font-bold tracking-[-0.05em]"
+      >
+        Projects
+      </h2>
     </div>
 
-    <div class="divide-line/60 flex flex-col divide-y">
+    <div class="flex flex-col">
       <article
         v-for="project in projects"
         :key="project.id"
-        class="grid grid-cols-1 items-baseline gap-3 py-5 md:grid-cols-[120px_1fr_auto] md:gap-6"
+        class="border-line flex flex-col gap-[0.55rem] border-t py-4 last:border-b"
       >
-        <div class="flex items-center gap-2 text-xs md:flex-col md:items-start">
-          <span class="text-soft text-[0.68rem] font-bold tracking-[0.1em] uppercase">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-ink font-medium">
             {{ categoryLabels[project.category] ?? project.category }}
           </span>
-          <span class="text-soft font-mono text-xs">{{ project.year }}</span>
+          <span class="text-soft font-mono text-[0.82rem]">{{ project.year }}</span>
         </div>
 
-        <div class="flex flex-col gap-1">
-          <h3 class="text-ink m-0 text-base font-semibold tracking-tight">{{ project.title }}</h3>
-          <p class="text-muted m-0 text-sm leading-relaxed">{{ project.description }}</p>
+        <div class="flex flex-col gap-[0.35rem]">
+          <h3 class="text-ink m-0 text-[1.08rem] leading-[1.15] font-bold">{{ project.title }}</h3>
+          <p class="text-muted m-0 text-[0.88rem] leading-[1.45]">{{ project.description }}</p>
         </div>
 
-        <div class="mt-2 flex flex-wrap items-center gap-2 md:mt-0">
+        <div class="mt-1 flex flex-wrap gap-[0.45rem]">
           <a
             v-for="link in project.links"
             :key="`${project.id}-${link.label}`"
             :href="link.href"
-            class="text-muted bg-chip border-chip-line hover:text-ink hover:border-line-strong inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all [&_svg]:size-3.5 [&_svg]:fill-current"
+            class="text-muted bg-chip border-chip-line hover:text-ink hover:border-line-strong hover:bg-card-hover inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all [&_svg]:size-[0.85rem] [&_svg]:fill-current"
             :aria-label="`${project.title} ${link.label}`"
             target="_blank"
             rel="noreferrer"

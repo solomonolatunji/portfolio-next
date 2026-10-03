@@ -32,28 +32,30 @@ const {
 </script>
 
 <template>
-  <section class="grid min-h-[34vh] w-full content-center justify-items-center gap-4 py-4">
-    <div class="mx-auto w-full max-w-190">
-      <p class="text-soft mb-2 text-[0.72rem] font-bold tracking-[0.16em] uppercase">
+  <section
+    class="mx-auto grid min-h-0 w-full max-w-[760px] content-center justify-items-center gap-4 pt-[0.9rem] pb-[0.4rem] sm:min-h-[34vh] sm:pt-[1.1rem]"
+  >
+    <div class="w-full">
+      <p class="text-soft m-0 mb-[0.7rem] text-[0.72rem] font-bold tracking-[0.16em] uppercase">
         Software Engineer
       </p>
       <h1
-        class="text-ink m-0 text-[clamp(1.8rem,4vw,3.2rem)] leading-tight font-bold tracking-[-0.05em] whitespace-nowrap"
+        class="text-ink m-0 text-[clamp(1.7rem,10vw,2.25rem)] leading-none font-bold tracking-[-0.05em] whitespace-nowrap sm:text-[clamp(1.4rem,4vw,3.2rem)]"
       >
         {{ aboutData.name }}
       </h1>
 
       <div
-        class="text-muted mt-4 flex flex-wrap items-center gap-2 text-sm"
+        class="text-muted row-gap-2 sm:row-gap-[0.55rem] mt-4 flex flex-wrap items-center gap-[0.45rem] text-[0.84rem] sm:text-[0.9rem]"
         aria-label="Products currently building"
       >
         <span class="text-ink text-[0.68rem] font-bold tracking-[0.12em] uppercase">Building</span>
         <template v-for="(product, index) in activeProducts" :key="product.label">
-          <div class="text-ink inline-flex items-center gap-1.5 whitespace-nowrap">
+          <div class="text-ink inline-flex items-center gap-[0.45rem] whitespace-nowrap">
             <img
               :src="product.logo"
               :alt="`${product.label} logo`"
-              class="size-5.5 shrink-0 rounded object-cover"
+              class="size-[1.25rem] shrink-0 rounded-[0.3rem] object-cover sm:size-[1.4rem]"
               loading="lazy"
             />
             <span>{{ product.label }}</span>
@@ -65,7 +67,7 @@ const {
       <button
         v-if="nowPlaying"
         type="button"
-        class="bg-card border-line hover:border-line-strong hover:bg-card-hover shadow-card group mt-4 flex w-full cursor-pointer items-center gap-3.5 rounded-xl border p-3 text-left transition-all"
+        class="border-line hover:border-line-strong text-muted mt-[0.9rem] grid w-full cursor-pointer grid-cols-[auto_1fr] items-start gap-[0.65rem] rounded-[0.85rem] border bg-[rgba(12,12,12,0.7)] p-[0.65rem] text-left transition-colors hover:bg-[rgba(15,15,15,0.8)] sm:mt-4 sm:gap-[0.8rem] sm:p-[0.7rem]"
         aria-label="Open listening details"
         @click="openListeningModal"
       >
@@ -73,74 +75,85 @@ const {
           v-if="nowPlaying.artworkUrl"
           :src="nowPlaying.artworkUrl"
           :alt="`${nowPlaying.title} cover art`"
-          class="border-line/60 size-14 shrink-0 rounded-lg border object-cover"
+          class="border-line mt-[0.05rem] size-[3.15rem] shrink-0 rounded-[0.65rem] border object-cover sm:size-[3.55rem]"
           loading="lazy"
         />
 
-        <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span class="text-soft text-[0.68rem] font-bold tracking-[0.12em] uppercase">{{
-            listeningStateLabel
-          }}</span>
-          <div class="truncate">
-            <p class="text-ink m-0 truncate text-sm font-semibold">{{ nowPlaying.title }}</p>
-            <p class="text-muted m-0 truncate text-xs">{{ nowPlaying.artist }}</p>
-          </div>
-        </div>
-
-        <div class="ml-auto flex shrink-0 items-center gap-3">
+        <div
+          class="grid w-full grid-cols-[minmax(0,1fr)_auto] grid-rows-[auto_auto] items-start gap-x-3 gap-y-[0.16rem] sm:gap-x-4"
+        >
           <span
-            v-if="listeningDeviceLabel"
-            class="text-soft bg-chip border-chip-line hidden rounded-full border px-2 py-0.5 text-[0.68rem] sm:inline-block"
+            class="text-ink col-start-1 row-start-1 text-[0.58rem] font-semibold tracking-[0.03em] whitespace-nowrap uppercase sm:text-[0.62rem] sm:tracking-[0.04em]"
           >
-            {{ listeningDeviceLabel }}
+            {{ listeningStateLabel }}
           </span>
-          <div class="flex items-center gap-2.5">
-            <div
-              class="text-muted flex items-center"
-              :class="{ 'opacity-50': !nowPlaying.isPlaying }"
-              aria-hidden="true"
+          <div class="col-start-1 row-start-2 grid min-w-0 content-center">
+            <p class="text-ink m-0 truncate text-[0.9rem] leading-[1.35]">{{ nowPlaying.title }}</p>
+            <p class="text-muted m-0 truncate text-[0.82rem] leading-[1.45]">
+              {{ nowPlaying.artist }}
+            </p>
+          </div>
+          <div
+            class="col-start-2 row-span-2 row-start-1 ml-[0.15rem] grid min-w-0 shrink-0 content-start justify-items-end gap-y-1.5 self-start sm:ml-[0.2rem] sm:gap-y-[0.38rem]"
+          >
+            <span
+              v-if="listeningDeviceLabel"
+              class="text-muted m-0 justify-self-end text-right text-[0.58rem] leading-[1.35] font-bold tracking-[0.02em] whitespace-nowrap sm:text-[0.66rem]"
             >
-              <ListeningBarsIcon />
-            </div>
-            <div class="flex items-center gap-2" aria-label="Listening links" @click.stop>
-              <a
-                :href="nowPlaying.spotifyUrl"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Open on Spotify"
-                class="text-muted hover:text-ink p-1 transition-colors"
+              {{ listeningDeviceLabel }}
+            </span>
+            <div class="flex items-center justify-end gap-2 sm:gap-[0.65rem]">
+              <div
+                class="listening-beam h-[2rem] w-[2.7rem] sm:h-[2.5rem] sm:w-[3.6rem]"
+                :class="{ paused: !nowPlaying.isPlaying }"
+                aria-hidden="true"
+              >
+                <ListeningBarsIcon class="h-[1.4rem] w-[1.4rem] sm:h-8 sm:w-8" />
+              </div>
+              <div
+                class="flex items-center justify-end gap-1.5 sm:gap-[0.55rem]"
+                aria-label="Listening links"
                 @click.stop
               >
-                <svg viewBox="0 0 24 24" class="size-4.5" aria-hidden="true">
-                  <path :fill="`#${siSpotify.hex}`" :d="siSpotify.path" />
-                </svg>
-              </a>
-              <a
-                v-if="nowPlaying.appleMusicUrl"
-                :href="nowPlaying.appleMusicUrl"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Open on Apple Music"
-                class="text-muted hover:text-ink p-1 transition-colors"
-                @click.stop
-              >
-                <svg viewBox="0 0 24 24" class="size-4.5" aria-hidden="true">
-                  <path :fill="`#${siApplemusic.hex}`" :d="siApplemusic.path" />
-                </svg>
-              </a>
-              <a
-                v-if="nowPlaying.youtubeUrl"
-                :href="nowPlaying.youtubeUrl"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Open on YouTube Music"
-                class="text-muted hover:text-ink p-1 transition-colors"
-                @click.stop
-              >
-                <svg viewBox="0 0 24 24" class="size-4.5" aria-hidden="true">
-                  <path :fill="`#${siYoutubemusic.hex}`" :d="siYoutubemusic.path" />
-                </svg>
-              </a>
+                <a
+                  :href="nowPlaying.spotifyUrl"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Open on Spotify"
+                  class="border-line text-ink hover:border-line-strong inline-flex size-[1.8rem] items-center justify-center rounded-full border bg-[linear-gradient(180deg,rgba(16,16,16,0.96),rgba(9,9,9,0.98))] transition-all hover:-translate-y-px sm:size-[2.3rem]"
+                  @click.stop
+                >
+                  <svg viewBox="0 0 24 24" class="size-[0.9rem] sm:size-4" aria-hidden="true">
+                    <path :fill="`#${siSpotify.hex}`" :d="siSpotify.path" />
+                  </svg>
+                </a>
+                <a
+                  v-if="nowPlaying.appleMusicUrl"
+                  :href="nowPlaying.appleMusicUrl"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Open on Apple Music"
+                  class="border-line text-ink hover:border-line-strong inline-flex size-[1.8rem] items-center justify-center rounded-full border bg-[linear-gradient(180deg,rgba(16,16,16,0.96),rgba(9,9,9,0.98))] transition-all hover:-translate-y-px sm:size-[2.3rem]"
+                  @click.stop
+                >
+                  <svg viewBox="0 0 24 24" class="size-[0.9rem] sm:size-4" aria-hidden="true">
+                    <path :fill="`#${siApplemusic.hex}`" :d="siApplemusic.path" />
+                  </svg>
+                </a>
+                <a
+                  v-if="nowPlaying.youtubeUrl"
+                  :href="nowPlaying.youtubeUrl"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Open on YouTube Music"
+                  class="border-line text-ink hover:border-line-strong inline-flex size-[1.8rem] items-center justify-center rounded-full border bg-[linear-gradient(180deg,rgba(16,16,16,0.96),rgba(9,9,9,0.98))] transition-all hover:-translate-y-px sm:size-[2.3rem]"
+                  @click.stop
+                >
+                  <svg viewBox="0 0 24 24" class="size-[0.9rem] sm:size-4" aria-hidden="true">
+                    <path :fill="`#${siYoutubemusic.hex}`" :d="siYoutubemusic.path" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -148,20 +161,24 @@ const {
 
       <div
         v-else-if="nowPlayingLoaded"
-        class="bg-card/50 border-line text-muted mt-4 flex w-full items-center justify-between rounded-xl border p-3 text-xs"
+        class="border-line text-muted mt-[0.9rem] flex w-full items-center justify-between rounded-[0.85rem] border bg-[rgba(12,12,12,0.7)] p-[0.65rem] text-xs sm:mt-4 sm:p-[0.7rem]"
         aria-label="Listening unavailable"
       >
-        <span class="text-soft text-[0.68rem] font-bold tracking-[0.12em] uppercase"
+        <span
+          class="text-ink text-[0.58rem] font-semibold tracking-[0.03em] uppercase sm:text-[0.62rem] sm:tracking-[0.04em]"
           >Currently Listening</span
         >
-        <p class="m-0">No live track right now.</p>
+        <p class="m-0 text-[0.82rem]">No live track right now.</p>
       </div>
 
-      <div class="mt-6 flex items-center gap-2" aria-label="Profile links">
+      <div
+        class="mt-5 flex items-center gap-2 sm:mt-[1.35rem] sm:gap-[0.65rem]"
+        aria-label="Profile links"
+      >
         <a
           v-for="link in profileLinks"
           :key="link.label"
-          class="border-line text-muted hover:border-line-strong hover:text-ink hover:bg-card inline-flex size-9 items-center justify-center rounded-full border transition-all [&_svg]:size-4.5 [&_svg]:fill-current"
+          class="border-line text-ink hover:border-line-strong inline-flex size-10 items-center justify-center rounded-full border bg-[linear-gradient(180deg,rgba(16,16,16,0.96),rgba(9,9,9,0.98))] transition-all hover:-translate-y-0.5 [&_svg]:size-[0.95rem] [&_svg]:fill-current"
           :href="link.href"
           :aria-label="link.label"
           :target="link.label === 'Email' ? undefined : '_blank'"

@@ -47,57 +47,58 @@ useSeoMeta({
 </script>
 
 <template>
-  <UApp>
-    <main class="mx-auto flex min-h-dvh w-[min(980px,calc(100%-2rem))] flex-1 flex-col pt-9 pb-11">
-      <nav
-        class="text-soft mx-auto flex w-full max-w-190 items-center justify-between gap-2.5 text-[0.7rem] font-bold tracking-[0.16em] uppercase"
-        aria-label="Primary navigation"
-      >
-        <NuxtLink to="/" class="text-ink text-xs tracking-[0.08em]">
-          {{ siteConfig.shortName }}<span class="text-soft mx-0.5">/</span>26
+  <main
+    class="mx-auto flex min-h-dvh w-[min(calc(100%-1.25rem),1100px)] flex-1 flex-col pt-[1.35rem] pb-[2.4rem] sm:w-[min(980px,calc(100%-2rem))] sm:pt-[2.2rem] sm:pb-[2.8rem]"
+  >
+    <nav
+      class="text-soft mx-auto flex w-full max-w-190 items-center justify-between gap-[0.65rem] text-[0.7rem] font-bold tracking-[0.16em] uppercase"
+      aria-label="Primary navigation"
+    >
+      <NuxtLink to="/" class="text-ink text-[0.76rem] tracking-[0.08em]">
+        {{ siteConfig.shortName }}<span class="text-soft mx-[0.2rem]">/</span>26
+      </NuxtLink>
+      <div class="flex items-center gap-[0.65rem]">
+        <NuxtLink
+          to="/"
+          class="hover:text-ink transition-colors duration-150"
+          :class="{ 'text-ink': isHome }"
+          >Home
         </NuxtLink>
-        <div class="flex items-center gap-2.5">
-          <NuxtLink to="/" class="hover:text-ink transition-colors" :class="{ 'text-ink': isHome }"
-            >Home</NuxtLink
-          >
+        <span aria-hidden="true">/</span>
+        <NuxtLink
+          to="/blog"
+          class="hover:text-ink transition-colors duration-150"
+          :class="{ 'text-ink': isBlog }"
+          >Blog
+        </NuxtLink>
+        <span aria-hidden="true">/</span>
+        <NuxtLink
+          to="/guestbook"
+          class="hover:text-ink transition-colors duration-150"
+          :class="{ 'text-ink': isGuestbook }"
+          >Guestbook</NuxtLink
+        >
+        <template v-if="currentUser?.isAdmin">
           <span aria-hidden="true">/</span>
           <NuxtLink
-            to="/blog"
-            class="hover:text-ink transition-colors"
-            :class="{ 'text-ink': isBlog }"
-            >Blog</NuxtLink
+            to="/admin/blog"
+            class="hover:text-ink transition-colors duration-150"
+            :class="{ 'text-ink': isAdmin }"
+            >Admin</NuxtLink
           >
-          <span aria-hidden="true">/</span>
-          <NuxtLink
-            to="/guestbook"
-            class="hover:text-ink transition-colors"
-            :class="{ 'text-ink': isGuestbook }"
-          >
-            Guestbook
-          </NuxtLink>
-          <template v-if="currentUser?.isAdmin">
-            <span aria-hidden="true">/</span>
-            <NuxtLink
-              to="/admin/blog"
-              class="hover:text-ink transition-colors"
-              :class="{ 'text-ink': isAdmin }"
-            >
-              Admin
-            </NuxtLink>
-          </template>
-          <a
-            :href="profileLinks[0].href"
-            class="border-line text-muted hover:border-line-strong hover:text-ink ml-1.5 inline-flex size-8 items-center justify-center rounded-full border [&_svg]:size-4 [&_svg]:fill-current"
-            aria-label="Open Solomon's GitHub"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <GitHubIcon />
-          </a>
-        </div>
-      </nav>
-      <NuxtPage />
-      <SiteFooter />
-    </main>
-  </UApp>
+        </template>
+        <a
+          :href="profileLinks[0].href"
+          class="border-line text-muted hover:border-line-strong hover:text-ink ml-[0.35rem] inline-flex size-8 items-center justify-center rounded-full border transition-all [&_svg]:size-[0.95rem] [&_svg]:fill-current"
+          aria-label="Open Solomon's GitHub"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <GitHubIcon />
+        </a>
+      </div>
+    </nav>
+    <NuxtPage />
+    <SiteFooter />
+  </main>
 </template>
