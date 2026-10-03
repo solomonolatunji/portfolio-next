@@ -19,8 +19,11 @@ const { data, status, refresh } = await useAsyncData("admin-blog-posts", async (
 
 const posts = computed(() => data.value?.posts || []);
 const deletingId = ref<number | null>(null);
+const publishingId = ref<number | null>(null);
+const featuringId = ref<number | null>(null);
 
 async function togglePublish(post: BlogPostSummary) {
+  publishingId.value = post.id;
   try {
     await $fetch(`/api/admin/posts/${post.id}` as string, {
       method: "PUT",
@@ -29,10 +32,13 @@ async function togglePublish(post: BlogPostSummary) {
     await refresh();
   } catch (err) {
     console.error("Failed to toggle publish status:", err);
+  } finally {
+    publishingId.value = null;
   }
 }
 
 async function toggleFeatured(post: BlogPostSummary) {
+  featuringId.value = post.id;
   try {
     await $fetch(`/api/admin/posts/${post.id}` as string, {
       method: "PUT",
@@ -41,6 +47,8 @@ async function toggleFeatured(post: BlogPostSummary) {
     await refresh();
   } catch (err) {
     console.error("Failed to toggle featured status:", err);
+  } finally {
+    featuringId.value = null;
   }
 }
 
@@ -138,14 +146,29 @@ async function deletePost(post: BlogPostSummary) {
             size="xs"
             color="neutral"
             :variant="post.featured ? 'solid' : 'outline'"
+            :loading="featuringId === post.id"
+            :disabled="Boolean(featuringId || publishingId || deletingId)"
             @click="toggleFeatured(post)"
           >
             {{ post.featured ? "⭐ Unfeature" : "☆ Feature" }}
           </UButton>
-          <UButton size="xs" color="neutral" variant="outline" @click="togglePublish(post)">
+          <UButton
+            size="xs"
+            color="neutral"
+            variant="outline"
+            :loading="publishingId === post.id"
+            :disabled="Boolean(featuringId || publishingId || deletingId)"
+            @click="togglePublish(post)"
+          >
             {{ post.published ? "Unpublish" : "Publish" }}
           </UButton>
-          <UButton size="xs" color="neutral" variant="outline" :to="`/admin/blog/${post.id}`">
+          <UButton
+            size="xs"
+            color="neutral"
+            variant="outline"
+            :to="`/admin/blog/${post.id}`"
+            :disabled="Boolean(featuringId || publishingId || deletingId)"
+          >
             Edit
           </UButton>
           <UButton
@@ -162,6 +185,7 @@ async function deletePost(post: BlogPostSummary) {
             color="error"
             variant="ghost"
             :loading="deletingId === post.id"
+            :disabled="Boolean(featuringId || publishingId || deletingId)"
             @click="deletePost(post)"
           >
             Delete

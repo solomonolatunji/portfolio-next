@@ -59,9 +59,17 @@ async function loadGuestbook() {
   }
 }
 
+const signingOut = ref(false);
+
 async function signOut() {
-  await request("/api/auth/logout", { method: "POST" });
-  user.value = null;
+  if (signingOut.value) return;
+  signingOut.value = true;
+  try {
+    await request("/api/auth/logout", { method: "POST" });
+    user.value = null;
+  } finally {
+    signingOut.value = false;
+  }
 }
 
 async function submitMessage() {
@@ -121,11 +129,16 @@ onMounted(loadGuestbook);
           </div>
           <button
             type="button"
-            class="text-soft inline-flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-xs transition-colors hover:text-red-400"
+            class="text-soft inline-flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-xs transition-colors hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="signingOut"
             @click="signOut"
           >
-            <LogOutIcon class="size-3.5 fill-current" />
-            Sign out
+            <span
+              v-if="signingOut"
+              class="inline-block size-3 animate-spin rounded-full border border-current border-t-transparent"
+            />
+            <LogOutIcon v-else class="size-3.5 fill-current" />
+            {{ signingOut ? "Signing out..." : "Sign out" }}
           </button>
         </div>
       </div>

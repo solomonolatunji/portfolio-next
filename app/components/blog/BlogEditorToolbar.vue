@@ -110,6 +110,10 @@ function onFileSelected(event: Event) {
       title="Upload image to Cloudinary & insert markdown"
       @click="fileInputRef?.click()"
     >
+      <span
+        v-if="isUploadingInline"
+        class="inline-block size-3 animate-spin rounded-full border border-current border-t-transparent"
+      />
       <span v-if="isUploadingInline">Uploading...</span>
       <span v-else>🖼️ Upload Image</span>
     </button>

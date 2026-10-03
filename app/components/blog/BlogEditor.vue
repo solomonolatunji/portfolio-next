@@ -36,6 +36,7 @@ const allowComments = ref(props.post ? Boolean(props.post.allowComments) : true)
 
 const activeTab = ref<"write" | "preview" | "split">("write");
 const isSubmitting = ref(false);
+const submittingAction = ref<"draft" | "publish" | null>(null);
 const isUploadingInline = ref(false);
 const errorMessage = ref<string | null>(null);
 const successMessage = ref<string | null>(null);
@@ -103,9 +104,16 @@ async function handleInlineUpload(file: File) {
 }
 
 async function savePost(publishState?: boolean) {
-  if (publishState !== undefined) published.value = publishState;
+  if (publishState !== undefined) {
+    published.value = publishState;
+    submittingAction.value = publishState ? "publish" : "draft";
+  } else {
+    submittingAction.value = published.value ? "publish" : "draft";
+  }
+
   if (!title.value.trim()) {
     errorMessage.value = "Title is required.";
+    submittingAction.value = null;
     return;
   }
 
@@ -152,6 +160,7 @@ async function savePost(publishState?: boolean) {
       "Failed to save post.";
   } finally {
     isSubmitting.value = false;
+    submittingAction.value = null;
   }
 }
 </script>
@@ -172,15 +181,19 @@ async function savePost(publishState?: boolean) {
         <UButton
           color="neutral"
           variant="outline"
+          :loading="submittingAction === 'draft'"
           :disabled="isSubmitting"
           @click="savePost(false)"
         >
           Save as Draft
         </UButton>
-        <UButton color="neutral" :disabled="isSubmitting" @click="savePost(true)">
-          {{
-            isSubmitting ? "Saving..." : published ? "Update & Keep Published" : "Publish Article"
-          }}
+        <UButton
+          color="neutral"
+          :loading="submittingAction === 'publish'"
+          :disabled="isSubmitting"
+          @click="savePost(true)"
+        >
+          {{ published ? (isNew ? "Publish Article" : "Update & Keep Published") : "Publish Article" }}
         </UButton>
       </div>
     </div>
