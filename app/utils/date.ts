@@ -1,3 +1,15 @@
+const DATE_TIME_FORMAT: Intl.DateTimeFormatOptions = {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+};
+
+function format(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", DATE_TIME_FORMAT).format(date);
+}
+
 export function formatDate(value: string | number | Date | null | undefined): string {
   if (!value) return "";
   try {
@@ -19,12 +31,12 @@ export function formatDate(value: string | number | Date | null | undefined): st
     if (Number.isNaN(date.getTime())) {
       const fallback = new Date(value as any);
       if (!Number.isNaN(fallback.getTime())) {
-        return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(fallback);
+        return format(fallback);
       }
       return String(value);
     }
 
-    return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(date);
+    return format(date);
   } catch {
     return String(value ?? "");
   }

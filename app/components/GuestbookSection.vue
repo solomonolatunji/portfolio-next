@@ -147,29 +147,29 @@ onMounted(loadGuestbook);
       No messages yet. Be the first to sign!
     </p>
 
-    <div v-else class="guestbook-entries">
-      <article v-for="entry in entries" :key="entry.id" class="guestbook-entry">
-        <img
-          v-if="entry.avatarUrl"
-          :src="entry.avatarUrl"
-          :alt="entry.username"
-          class="guestbook-avatar"
-          loading="lazy"
-        />
-        <div class="guestbook-entry-body">
-          <div class="guestbook-entry-meta">
+    <div v-else class="guestbook-notes">
+      <article v-for="entry in entries" :key="entry.id" class="guestbook-note">
+        <p class="guestbook-note-message">{{ entry.message }}</p>
+        <div v-if="entry.signatureUrl" class="guestbook-note-signature">
+          <img
+            :src="entry.signatureUrl"
+            :alt="`${entry.username}'s signature`"
+            loading="lazy"
+          />
+        </div>
+        <footer class="guestbook-note-footer">
+          <img
+            v-if="entry.avatarUrl"
+            :src="entry.avatarUrl"
+            :alt="entry.username"
+            class="guestbook-note-avatar"
+            loading="lazy"
+          />
+          <div>
             <a :href="entry.profileUrl" target="_blank" rel="noreferrer">{{ entry.username }}</a>
             <time>{{ formatDate(entry.createdAt) }}</time>
           </div>
-          <p>{{ entry.message }}</p>
-          <div v-if="entry.signatureUrl" class="guestbook-entry-signature">
-            <img
-              :src="entry.signatureUrl"
-              :alt="`${entry.username}'s signature`"
-              loading="lazy"
-            />
-          </div>
-        </div>
+        </footer>
       </article>
     </div>
   </section>

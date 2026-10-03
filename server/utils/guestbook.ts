@@ -88,12 +88,13 @@ export async function fetchGithubUser(accessToken: string) {
   const user = (await response.json()) as {
     id: number;
     login: string;
+    name?: string | null;
     avatar_url?: string;
     html_url: string;
   };
   return {
     id: String(user.id),
-    username: user.login,
+    username: user.name?.trim() || user.login,
     avatarUrl: user.avatar_url || null,
     profileUrl: user.html_url,
   } satisfies GuestbookUser;
