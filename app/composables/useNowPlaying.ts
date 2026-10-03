@@ -5,8 +5,8 @@ interface NowPlayingResult {
   track: NowPlaying | null;
 }
 
-export async function useNowPlaying() {
-  const { data, status, refresh } = await useAsyncData<NowPlayingResult>(
+export function useNowPlaying() {
+  const { data, status, refresh } = useAsyncData<NowPlayingResult>(
     "now-playing",
     async () => {
       try {
