@@ -90,7 +90,7 @@ useSeoMeta({
           <NuxtLink
             v-if="post.category"
             :to="`/blog?category=${post.category.slug}`"
-            class="rounded-full border border-border/40 bg-elevated/50 px-2.5 py-0.5 text-xs font-medium text-muted hover:border-line-strong hover:text-ink transition-colors"
+            class="border-border/40 bg-elevated/50 text-muted hover:border-line-strong hover:text-ink rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors"
           >
             {{ post.category.name }}
           </NuxtLink>

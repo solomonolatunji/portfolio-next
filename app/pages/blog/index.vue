@@ -157,7 +157,9 @@ function onPageChange(newPage: number) {
 
     <!-- Featured Hero Section (Top 3 max, shown on default view) -->
     <BlogFeaturedHero
-      v-if="featuredPosts.length > 0 && currentPage === 1 && !searchQuery.trim() && !selectedCategory"
+      v-if="
+        featuredPosts.length > 0 && currentPage === 1 && !searchQuery.trim() && !selectedCategory
+      "
       :posts="featuredPosts"
     />
 
@@ -195,7 +197,7 @@ function onPageChange(newPage: number) {
           "
           @click="selectCategory('')"
         >
-          All <span class="opacity-70 text-[0.7rem] ml-0.5">({{ totalPublishedCount }})</span>
+          All <span class="ml-0.5 text-[0.7rem] opacity-70">({{ totalPublishedCount }})</span>
         </button>
 
         <button
@@ -211,16 +213,16 @@ function onPageChange(newPage: number) {
           @click="selectCategory(cat.slug)"
         >
           {{ cat.name }}
-          <span
-            v-if="cat.postCount !== undefined"
-            class="opacity-70 text-[0.7rem] ml-0.5"
-          >({{ cat.postCount }})</span>
+          <span v-if="cat.postCount !== undefined" class="ml-0.5 text-[0.7rem] opacity-70"
+            >({{ cat.postCount }})</span
+          >
         </button>
       </div>
 
       <!-- Active search query indicator -->
       <div v-if="searchQuery.trim()" class="text-muted flex items-center gap-2 text-xs">
-        Showing results for "<strong>{{ searchQuery }}</strong>"
+        Showing results for "<strong>{{ searchQuery }}</strong
+        >"
         <button
           type="button"
           class="text-soft hover:text-ink cursor-pointer border-none bg-transparent p-0 text-xs underline"
@@ -245,7 +247,10 @@ function onPageChange(newPage: number) {
         v-if="searchQuery || selectedCategory"
         type="button"
         class="bg-card border-line text-ink hover:border-line-strong mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-1.5 text-xs font-medium transition-all"
-        @click="clearSearch(); selectCategory('');"
+        @click="
+          clearSearch();
+          selectCategory('');
+        "
       >
         Reset Filters
       </button>

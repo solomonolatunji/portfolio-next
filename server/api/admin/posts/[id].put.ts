@@ -19,7 +19,7 @@ function calculateReadTime(text: string): number {
 }
 
 export default defineEventHandler(async (event) => {
-  await requireAdmin(event);
+  await requireAdmin(event as unknown as Parameters<typeof requireAdmin>[0]);
   const db = getDb();
 
   const idParam = getRouterParam(event, "id");
@@ -33,16 +33,19 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Post not found." });
   }
 
-  const body = await readBody<{
-    title?: string;
-    slug?: string;
-    description?: string;
-    content?: string;
-    featuredImageUrl?: string;
-    published?: boolean;
-    featured?: boolean;
-    allowComments?: boolean;
-  }>(event);
+  const body = (await readBody(event as unknown as Parameters<typeof readBody>[0])) as
+    | {
+        title?: string;
+        slug?: string;
+        description?: string;
+        content?: string;
+        featuredImageUrl?: string;
+        categoryId?: string;
+        published?: boolean;
+        featured?: boolean;
+        allowComments?: boolean;
+      }
+    | undefined;
 
   const title = body?.title?.trim() || existing.title;
   const rawSlug = body?.slug?.trim() || slugify(title);
@@ -67,9 +70,7 @@ export default defineEventHandler(async (event) => {
       ? body.featuredImageUrl.trim() || null
       : existing.featuredImageUrl;
   const categoryId =
-    body?.categoryId !== undefined
-      ? body.categoryId?.trim() || null
-      : existing.categoryId;
+    body?.categoryId !== undefined ? body.categoryId?.trim() || null : existing.categoryId;
   const published = body?.published !== undefined ? Boolean(body.published) : existing.published;
   const featured =
     body?.featured !== undefined ? Boolean(body.featured) : Boolean(existing.featured);

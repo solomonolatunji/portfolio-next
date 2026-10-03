@@ -193,7 +193,9 @@ async function savePost(publishState?: boolean) {
           :disabled="isSubmitting"
           @click="savePost(true)"
         >
-          {{ published ? (isNew ? "Publish Article" : "Update & Keep Published") : "Publish Article" }}
+          {{
+            published ? (isNew ? "Publish Article" : "Update & Keep Published") : "Publish Article"
+          }}
         </UButton>
       </div>
     </div>

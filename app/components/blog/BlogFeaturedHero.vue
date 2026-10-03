@@ -177,7 +177,7 @@ const sidePosts = computed<BlogPostSummary[]>(() => props.posts.slice(1, 3));
             <NuxtLink
               v-if="leadPost.category"
               :to="`/blog?category=${leadPost.category.slug}`"
-              class="rounded-full border border-border/40 bg-elevated/50 px-2 py-0.5 text-[0.65rem] font-medium text-muted hover:border-line-strong hover:text-ink transition-colors"
+              class="border-border/40 bg-elevated/50 text-muted hover:border-line-strong hover:text-ink rounded-full border px-2 py-0.5 text-[0.65rem] font-medium transition-colors"
             >
               {{ leadPost.category.name }}
             </NuxtLink>
@@ -234,7 +234,7 @@ const sidePosts = computed<BlogPostSummary[]>(() => props.posts.slice(1, 3));
               <NuxtLink
                 v-if="post.category"
                 :to="`/blog?category=${post.category.slug}`"
-                class="rounded-full border border-border/40 bg-elevated/50 px-2 py-0.5 text-[0.65rem] font-medium text-muted hover:border-line-strong hover:text-ink transition-colors"
+                class="border-border/40 bg-elevated/50 text-muted hover:border-line-strong hover:text-ink rounded-full border px-2 py-0.5 text-[0.65rem] font-medium transition-colors"
               >
                 {{ post.category.name }}
               </NuxtLink>

@@ -171,12 +171,12 @@ onMounted(loadGuestbook);
 
     <div
       v-else-if="!loading"
-      class="border-line mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-[0.85rem] border bg-[rgba(12,12,12,0.7)] p-4"
+      class="border-line mt-8 flex flex-col items-stretch justify-between gap-4 rounded-[0.85rem] border bg-[rgba(12,12,12,0.7)] p-4 sm:flex-row sm:items-center"
     >
       <p class="text-muted m-0 text-[0.9rem]">Want to leave a message?</p>
       <a
         href="/api/auth/github"
-        class="border-line-strong text-[#080808] bg-ink hover:opacity-90 inline-flex min-h-[2.45rem] items-center justify-center gap-1.5 rounded-[0.55rem] border px-[0.85rem] py-[0.55rem] text-[0.78rem] font-bold transition-transform hover:-translate-y-px [&_svg]:size-4 [&_svg]:fill-current"
+        class="border-line-strong bg-ink inline-flex min-h-[2.45rem] items-center justify-center gap-1.5 rounded-[0.55rem] border px-[0.85rem] py-[0.55rem] text-[0.78rem] font-bold text-[#080808] transition-transform hover:-translate-y-px hover:opacity-90 [&_svg]:size-4 [&_svg]:fill-current"
         rel="external"
       >
         <GitHubIcon />
