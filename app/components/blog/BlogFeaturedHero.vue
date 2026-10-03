@@ -173,7 +173,14 @@ const sidePosts = computed<BlogPostSummary[]>(() => props.posts.slice(1, 3));
         </NuxtLink>
 
         <div class="flex flex-1 flex-col gap-2.5 p-5">
-          <div class="text-soft flex items-center gap-2 text-xs">
+          <div class="text-soft flex flex-wrap items-center gap-2 text-xs">
+            <NuxtLink
+              v-if="leadPost.category"
+              :to="`/blog?category=${leadPost.category.slug}`"
+              class="rounded-full border border-border/40 bg-elevated/50 px-2 py-0.5 text-[0.65rem] font-medium text-muted hover:border-line-strong hover:text-ink transition-colors"
+            >
+              {{ leadPost.category.name }}
+            </NuxtLink>
             <span
               class="rounded-full bg-amber-400/10 px-2 py-0.5 text-[0.65rem] font-bold text-amber-400"
               >⭐ Top Pick</span
@@ -223,7 +230,14 @@ const sidePosts = computed<BlogPostSummary[]>(() => props.posts.slice(1, 3));
           class="group bg-card border-line hover:border-line-strong hover:bg-card-hover flex flex-1 flex-col overflow-hidden rounded-[14px] border p-4 transition-all"
         >
           <div class="flex flex-1 flex-col gap-2">
-            <div class="text-soft flex items-center gap-2 text-xs">
+            <div class="text-soft flex flex-wrap items-center gap-2 text-xs">
+              <NuxtLink
+                v-if="post.category"
+                :to="`/blog?category=${post.category.slug}`"
+                class="rounded-full border border-border/40 bg-elevated/50 px-2 py-0.5 text-[0.65rem] font-medium text-muted hover:border-line-strong hover:text-ink transition-colors"
+              >
+                {{ post.category.name }}
+              </NuxtLink>
               <span
                 class="rounded-full bg-amber-400/10 px-2 py-0.5 text-[0.65rem] font-bold text-amber-400"
                 >⭐ Featured</span

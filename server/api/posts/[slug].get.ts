@@ -1,6 +1,13 @@
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "#server/db";
-import { commentReactions, postComments, postReactions, posts, users } from "#server/db/schema";
+import {
+  categories,
+  commentReactions,
+  postComments,
+  postReactions,
+  posts,
+  users,
+} from "#server/db/schema";
 import { isAdminUser } from "#server/utils/admin";
 import { getVisitorOrUser } from "#server/utils/visitor";
 
@@ -12,12 +19,24 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Slug is required." });
   }
 
-  const [post] = await db.select().from(posts).where(eq(posts.slug, slug)).limit(1);
-  if (!post) {
+  const [row] = await db
+    .select({
+      post: posts,
+      category: categories,
+    })
+    .from(posts)
+    .leftJoin(categories, eq(posts.categoryId, categories.id))
+    .where(eq(posts.slug, slug))
+    .limit(1);
+
+  if (!row || !row.post) {
     throw createError({ statusCode: 404, statusMessage: "Blog post not found." });
   }
 
-  const actor = await getVisitorOrUser(event);
+  const post = row.post;
+  const category = row.category;
+
+  const actor = await getVisitorOrUser(event as unknown as Parameters<typeof getVisitorOrUser>[0]);
   const isUserAdmin = actor.user ? isAdminUser(actor.user) : false;
 
   if (!post.published && !isUserAdmin) {
@@ -166,6 +185,14 @@ export default defineEventHandler(async (event) => {
   return {
     post: {
       ...post,
+      category: category
+        ? {
+            id: category.id,
+            slug: category.slug,
+            name: category.name,
+            description: category.description,
+          }
+        : null,
       published: Boolean(post.published),
       allowComments: Boolean(post.allowComments),
       createdAt:

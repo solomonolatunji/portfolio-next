@@ -87,6 +87,14 @@ useSeoMeta({
       <!-- Article Header -->
       <header class="border-line/60 flex flex-col gap-3 border-b pb-6">
         <div class="text-soft flex flex-wrap items-center gap-2 text-xs">
+          <NuxtLink
+            v-if="post.category"
+            :to="`/blog?category=${post.category.slug}`"
+            class="rounded-full border border-border/40 bg-elevated/50 px-2.5 py-0.5 text-xs font-medium text-muted hover:border-line-strong hover:text-ink transition-colors"
+          >
+            {{ post.category.name }}
+          </NuxtLink>
+          <span v-if="post.category">·</span>
           <time>{{ formatDate(post.createdAt) }}</time>
           <span>·</span>
           <span>{{ post.readTimeMinutes }} min read</span>

@@ -57,6 +57,7 @@ export default defineEventHandler(async (event) => {
   const description = body?.description?.trim() || "";
   const content = body?.content || "";
   const featuredImageUrl = body?.featuredImageUrl?.trim() || null;
+  const categoryId = body?.categoryId?.trim() || null;
   const published = Boolean(body?.published);
   const featured = Boolean(body?.featured);
   const allowComments = body?.allowComments !== undefined ? Boolean(body.allowComments) : true;
@@ -68,6 +69,7 @@ export default defineEventHandler(async (event) => {
     description,
     content,
     featuredImageUrl,
+    categoryId,
     published,
     featured,
     allowComments,

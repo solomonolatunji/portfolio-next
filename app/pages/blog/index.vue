@@ -23,6 +23,7 @@ const router = useRouter();
 
 const currentPage = ref(Number(route.query.page) || 1);
 const searchQuery = ref(typeof route.query.search === "string" ? route.query.search : "");
+const selectedCategory = ref(typeof route.query.category === "string" ? route.query.category : "");
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 const {
@@ -38,10 +39,22 @@ const {
     if (searchQuery.value.trim()) {
       params.set("search", searchQuery.value.trim());
     }
+    if (selectedCategory.value.trim()) {
+      params.set("category", selectedCategory.value.trim());
+    }
     return await $fetch<BlogPostsResponse>(`/api/posts?${params.toString()}`);
   },
   {
     watch: [currentPage],
+  }
+);
+
+watch(
+  () => route.query.category,
+  (newCat) => {
+    selectedCategory.value = typeof newCat === "string" ? newCat : "";
+    currentPage.value = 1;
+    refresh();
   }
 );
 
@@ -53,6 +66,10 @@ const { data: userData } = await useAsyncData("current-user-blog", async () => {
 
 const featuredPosts = computed(() => postsData.value?.featured || []);
 const posts = computed(() => postsData.value?.posts || []);
+const categories = computed(() => postsData.value?.categories || []);
+const totalPublishedCount = computed(() =>
+  categories.value.reduce((acc, cat) => acc + (cat.postCount || 0), 0)
+);
 const pagination = computed(
   () => postsData.value?.pagination || { page: 1, limit: 6, total: 0, totalPages: 1 }
 );
@@ -81,6 +98,19 @@ function clearSearch() {
       ...route.query,
       page: undefined,
       search: undefined,
+    },
+  });
+  refresh();
+}
+
+function selectCategory(catSlug: string) {
+  selectedCategory.value = selectedCategory.value === catSlug ? "" : catSlug;
+  currentPage.value = 1;
+  router.replace({
+    query: {
+      ...route.query,
+      page: undefined,
+      category: selectedCategory.value || undefined,
     },
   });
   refresh();
@@ -125,14 +155,15 @@ function onPageChange(newPage: number) {
       </div>
     </div>
 
-    <!-- Featured Hero Section (Top 3 max) -->
+    <!-- Featured Hero Section (Top 3 max, shown on default view) -->
     <BlogFeaturedHero
-      v-if="featuredPosts.length > 0 && currentPage === 1 && !searchQuery.trim()"
+      v-if="featuredPosts.length > 0 && currentPage === 1 && !searchQuery.trim() && !selectedCategory"
       :posts="featuredPosts"
     />
 
-    <!-- Search & Filter Controls -->
-    <div class="flex flex-col gap-2">
+    <!-- Search & Category Filters -->
+    <div class="flex flex-col gap-3.5">
+      <!-- Search Bar -->
       <div class="relative w-full">
         <input
           v-model="searchQuery"
@@ -152,9 +183,44 @@ function onPageChange(newPage: number) {
         </button>
       </div>
 
+      <!-- Category Filter Pills -->
+      <div v-if="categories.length > 0" class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          class="cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-all"
+          :class="
+            !selectedCategory
+              ? 'bg-ink text-bg font-semibold shadow-xs'
+              : 'border-line hover:border-line-strong hover:bg-elevated/40 text-muted hover:text-ink border bg-transparent'
+          "
+          @click="selectCategory('')"
+        >
+          All <span class="opacity-70 text-[0.7rem] ml-0.5">({{ totalPublishedCount }})</span>
+        </button>
+
+        <button
+          v-for="cat in categories"
+          :key="cat.id"
+          type="button"
+          class="cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-all"
+          :class="
+            selectedCategory === cat.slug
+              ? 'bg-ink text-bg font-semibold shadow-xs'
+              : 'border-line hover:border-line-strong hover:bg-elevated/40 text-muted hover:text-ink border bg-transparent'
+          "
+          @click="selectCategory(cat.slug)"
+        >
+          {{ cat.name }}
+          <span
+            v-if="cat.postCount !== undefined"
+            class="opacity-70 text-[0.7rem] ml-0.5"
+          >({{ cat.postCount }})</span>
+        </button>
+      </div>
+
+      <!-- Active search query indicator -->
       <div v-if="searchQuery.trim()" class="text-muted flex items-center gap-2 text-xs">
-        Showing results for "<strong>{{ searchQuery }}</strong
-        >"
+        Showing results for "<strong>{{ searchQuery }}</strong>"
         <button
           type="button"
           class="text-soft hover:text-ink cursor-pointer border-none bg-transparent p-0 text-xs underline"
@@ -173,14 +239,15 @@ function onPageChange(newPage: number) {
     <!-- Empty State -->
     <div v-else-if="posts.length === 0" class="text-soft py-12 text-center text-sm">
       <p v-if="searchQuery" class="m-0">No articles matching "{{ searchQuery }}".</p>
+      <p v-else-if="selectedCategory" class="m-0">No articles found in this category.</p>
       <p v-else class="m-0">No articles published yet. Check back soon!</p>
       <button
-        v-if="searchQuery"
+        v-if="searchQuery || selectedCategory"
         type="button"
         class="bg-card border-line text-ink hover:border-line-strong mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-1.5 text-xs font-medium transition-all"
-        @click="clearSearch"
+        @click="clearSearch(); selectCategory('');"
       >
-        Clear Search Filter
+        Reset Filters
       </button>
     </div>
 

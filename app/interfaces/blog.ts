@@ -1,5 +1,13 @@
 export type BlogReactionType = "heart" | "fire" | "rocket" | "like" | "bulb";
 
+export interface BlogCategory {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string | null;
+  postCount?: number;
+}
+
 export interface BlogPost {
   id: number;
   slug: string;
@@ -7,6 +15,8 @@ export interface BlogPost {
   description: string;
   content: string;
   featuredImageUrl: string | null;
+  categoryId?: string | null;
+  category?: BlogCategory | null;
   published: boolean;
   featured: boolean;
   allowComments: boolean;
@@ -22,6 +32,8 @@ export interface BlogPostSummary {
   title: string;
   description: string;
   featuredImageUrl: string | null;
+  categoryId?: string | null;
+  category?: BlogCategory | null;
   published: boolean;
   featured: boolean;
   allowComments: boolean;
@@ -43,6 +55,7 @@ export interface BlogPagination {
 export interface BlogPostsResponse {
   featured: BlogPostSummary[];
   posts: BlogPostSummary[];
+  categories: BlogCategory[];
   pagination: BlogPagination;
 }
 

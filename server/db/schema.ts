@@ -39,6 +39,18 @@ export const guestbookEntries = mysqlTable(
   (table) => [index("idx_guestbook_entries_created_at").on(table.createdAt)]
 );
 
+export const categories = mysqlTable(
+  "categories",
+  {
+    id: varchar("id", { length: 64 }).primaryKey(),
+    slug: varchar("slug", { length: 64 }).notNull(),
+    name: varchar("name", { length: 128 }).notNull(),
+    description: varchar("description", { length: 255 }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("idx_categories_slug").on(table.slug)]
+);
+
 export const posts = mysqlTable(
   "posts",
   {
@@ -48,6 +60,7 @@ export const posts = mysqlTable(
     description: varchar("description", { length: 500 }).notNull(),
     content: text("content").notNull(),
     featuredImageUrl: varchar("featured_image_url", { length: 2048 }),
+    categoryId: varchar("category_id", { length: 64 }).references(() => categories.id),
     published: boolean("published").notNull().default(false),
     featured: boolean("featured").notNull().default(false),
     allowComments: boolean("allow_comments").notNull().default(true),
@@ -58,6 +71,7 @@ export const posts = mysqlTable(
   },
   (table) => [
     uniqueIndex("idx_posts_slug").on(table.slug),
+    index("idx_posts_category_id").on(table.categoryId),
     index("idx_posts_published").on(table.published),
     index("idx_posts_featured").on(table.featured),
     index("idx_posts_created_at").on(table.createdAt),

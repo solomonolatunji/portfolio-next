@@ -11,14 +11,24 @@ export function isCloudinaryConfigured(): boolean {
 export function configureCloudinary(): void {
   const url = env.CLOUDINARY_URL;
   if (url) {
-    cloudinary.config({
-      cloudinary_url: url,
-    });
+    try {
+      const parsed = new URL(url);
+      cloudinary.config({
+        cloud_name: parsed.hostname,
+        api_key: parsed.username,
+        api_secret: parsed.password,
+        secure: true,
+      });
+      return;
+    } catch {
+      cloudinary.config({ cloudinary_url: url });
+    }
   } else if (env.CLOUDINARY_CLOUD_NAME && env.CLOUDINARY_API_KEY && env.CLOUDINARY_API_SECRET) {
     cloudinary.config({
       cloud_name: env.CLOUDINARY_CLOUD_NAME,
       api_key: env.CLOUDINARY_API_KEY,
       api_secret: env.CLOUDINARY_API_SECRET,
+      secure: true,
     });
   }
 }
