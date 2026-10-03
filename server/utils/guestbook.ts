@@ -124,9 +124,9 @@ export async function createSession(user: GuestbookUser) {
 }
 
 export async function getGuestbookSession(event: H3Event) {
-  const db = getDb();
   const token = getCookie(event, SESSION_COOKIE);
   if (!token) return null;
+  const db = getDb();
   const result = await db
     .select({
       id: users.id,
@@ -142,9 +142,10 @@ export async function getGuestbookSession(event: H3Event) {
 }
 
 export async function clearGuestbookSession(event: H3Event) {
-  const db = getDb();
   const token = getCookie(event, SESSION_COOKIE);
-  if (token) await db.delete(sessions).where(eq(sessions.id, await hash(token)));
+  if (!token) return;
+  const db = getDb();
+  await db.delete(sessions).where(eq(sessions.id, await hash(token)));
 }
 
 export function setSessionCookie(event: H3Event, token: string) {

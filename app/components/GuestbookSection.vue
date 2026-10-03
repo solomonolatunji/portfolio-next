@@ -37,14 +37,25 @@ async function loadGuestbook() {
   loading.value = true;
   error.value = "";
   try {
-    const [session, guestbook] = await Promise.all([
+    const [sessionResult, guestbookResult] = await Promise.allSettled([
       request<{ user: User | null }>("/api/auth/me"),
       request<{ entries: Entry[] }>("/api/guestbook"),
     ]);
-    user.value = session.user;
-    entries.value = guestbook.entries;
-  } catch (loadError: unknown) {
-    error.value = loadError instanceof Error ? loadError.message : "Unable to load the guestbook.";
+
+    if (sessionResult.status === "fulfilled") {
+      user.value = sessionResult.value.user;
+    } else {
+      user.value = null;
+    }
+
+    if (guestbookResult.status === "fulfilled") {
+      entries.value = guestbookResult.value.entries;
+    } else {
+      error.value =
+        guestbookResult.reason instanceof Error
+          ? guestbookResult.reason.message
+          : "Unable to load guestbook entries.";
+    }
   } finally {
     loading.value = false;
   }
