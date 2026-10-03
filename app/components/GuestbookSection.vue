@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import LogOutIcon from "@/components/icons/LogOutIcon.vue";
+import { formatDate } from "@/utils/date";
 
 interface User {
   id: string;
@@ -88,11 +89,6 @@ async function submitMessage() {
   }
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
-    new Date(`${value.replace(" ", "T")}Z`)
-  );
-}
 
 onMounted(loadGuestbook);
 </script>
