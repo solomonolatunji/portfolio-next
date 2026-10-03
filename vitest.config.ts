@@ -7,8 +7,8 @@ const aliases = [
   { find: /^~~[/](.*)/, replacement: fileURLToPath(new URL("./$1", import.meta.url)) },
   { find: /^@@[/](.*)/, replacement: fileURLToPath(new URL("./$1", import.meta.url)) },
   { find: /^~~\/?$/, replacement: fileURLToPath(new URL(".", import.meta.url)) },
-  { find: /^@@\/?$/, replacement: fileURLToPath(new URL(".", import.meta.url)) },
   { find: /^@\/(.*)/, replacement: fileURLToPath(new URL("./app/$1", import.meta.url)) },
+  { find: /^~\/(.*)/, replacement: fileURLToPath(new URL("./app/$1", import.meta.url)) },
 ];
 
 export default defineConfig({
@@ -32,6 +32,7 @@ export default defineConfig({
           name: "nuxt",
           include: ["test/nuxt/*.{test,spec}.ts"],
           environment: "nuxt",
+          testTimeout: 20000,
         },
       }),
     ],

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import SignaturePadToolbar from "./SignaturePadToolbar.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -255,36 +256,43 @@ defineExpose({
 </script>
 
 <template>
-  <div class="signature-pad-block">
-    <div class="signature-pad-header">
-      <div class="signature-pad-title-wrap">
-        <label class="signature-label">Signature</label>
-        <span class="signature-hint">(Optional — sign or doodle below)</span>
-      </div>
-      <div class="signature-pad-actions">
-        <div class="signature-palette" role="radiogroup" aria-label="Signature ink color">
-          <button v-for="color in colors" :key="color.value" type="button" class="palette-chip"
-            :class="{ active: selectedColor === color.value }" :style="{ backgroundColor: color.value }"
-            :title="color.label" :disabled="disabled" @click="selectedColor = color.value" />
-        </div>
-        <button type="button" class="signature-sub-btn" title="Upload signature image" :disabled="disabled"
-          @click="triggerFileUpload">
-          Upload
-        </button>
-        <button v-if="hasDrawn" type="button" class="signature-sub-btn signature-clear-btn" :disabled="disabled"
-          @click="clear">
-          Clear
-        </button>
-        <input ref="fileInputRef" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" class="hidden"
-          @change="handleFileUpload" />
-      </div>
-    </div>
+  <div class="mt-2 flex flex-col gap-2">
+    <SignaturePadToolbar
+      v-model:selected-color="selectedColor"
+      :colors="colors"
+      :has-drawn="hasDrawn"
+      :disabled="disabled"
+      @upload="triggerFileUpload"
+      @clear="clear"
+    />
+    <input
+      ref="fileInputRef"
+      type="file"
+      accept="image/png,image/jpeg,image/webp,image/svg+xml"
+      class="hidden"
+      @change="handleFileUpload"
+    />
 
-    <div class="signature-canvas-wrapper" :class="{ 'is-disabled': disabled }">
-      <canvas ref="canvasRef" class="signature-canvas" @mousedown="startDrawing" @mousemove="draw"
-        @mouseup="stopDrawing" @mouseleave="stopDrawing" @touchstart.prevent="startTouchDrawing"
-        @touchmove.prevent="touchDraw" @touchend.prevent="stopDrawing" />
-      <div v-if="!hasDrawn" class="signature-watermark" aria-hidden="true">
+    <div
+      class="bg-elevated border-line relative h-36 w-full touch-none overflow-hidden rounded-xl border"
+      :class="{ 'pointer-events-none opacity-50': disabled }"
+    >
+      <canvas
+        ref="canvasRef"
+        class="block h-full w-full cursor-crosshair"
+        @mousedown="startDrawing"
+        @mousemove="draw"
+        @mouseup="stopDrawing"
+        @mouseleave="stopDrawing"
+        @touchstart.prevent="startTouchDrawing"
+        @touchmove.prevent="touchDraw"
+        @touchend.prevent="stopDrawing"
+      />
+      <div
+        v-if="!hasDrawn"
+        class="text-soft/50 pointer-events-none absolute inset-0 flex items-center justify-center text-xs"
+        aria-hidden="true"
+      >
         <span>✍️ Draw your signature here...</span>
       </div>
     </div>

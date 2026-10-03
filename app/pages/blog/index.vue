@@ -12,7 +12,8 @@ useHead({
   meta: [
     {
       name: "description",
-      content: "Articles, insights, and thoughts on technology, software engineering, architecture, and building products.",
+      content:
+        "Articles, insights, and thoughts on technology, software engineering, architecture, and building products.",
     },
   ],
 });
@@ -24,7 +25,11 @@ const currentPage = ref(Number(route.query.page) || 1);
 const searchQuery = ref(typeof route.query.search === "string" ? route.query.search : "");
 let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-const { data: postsData, status, refresh } = await useAsyncData(
+const {
+  data: postsData,
+  status,
+  refresh,
+} = await useAsyncData(
   "blog-posts",
   async () => {
     const params = new URLSearchParams();
@@ -40,16 +45,17 @@ const { data: postsData, status, refresh } = await useAsyncData(
   }
 );
 
-const { data: userData } = await useAsyncData(
-  "current-user-blog",
-  async () => {
-    return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({ user: null }));
-  }
-);
+const { data: userData } = await useAsyncData("current-user-blog", async () => {
+  return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({
+    user: null,
+  }));
+});
 
 const featuredPosts = computed(() => postsData.value?.featured || []);
 const posts = computed(() => postsData.value?.posts || []);
-const pagination = computed(() => postsData.value?.pagination || { page: 1, limit: 6, total: 0, totalPages: 1 });
+const pagination = computed(
+  () => postsData.value?.pagination || { page: 1, limit: 6, total: 0, totalPages: 1 }
+);
 const currentUser = computed(() => userData.value?.user || null);
 
 function onSearchInput() {
@@ -95,19 +101,24 @@ function onPageChange(newPage: number) {
 </script>
 
 <template>
-  <div class="blog-index-page">
+  <div class="mx-auto mt-6 flex w-full max-w-190 flex-col gap-8">
     <!-- Header Section -->
-    <div class="section-heading blog-heading">
-      <div class="blog-header-row">
+    <div class="flex flex-col gap-2">
+      <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p class="eyebrow">Writing & Insights</p>
-          <h1>Blog</h1>
-          <p class="section-copy">
+          <p class="text-soft m-0 text-[0.72rem] font-bold tracking-[0.16em] uppercase">
+            Writing & Insights
+          </p>
+          <h1 class="text-ink m-0 text-3xl font-bold tracking-tight">Blog</h1>
+          <p class="text-muted m-0 mt-1 text-sm">
             Notes on software engineering, architecture, systems design, and building things.
           </p>
         </div>
-        <div v-if="currentUser?.isAdmin" class="admin-create-cta">
-          <NuxtLink to="/admin/blog/new" class="guestbook-button">
+        <div v-if="currentUser?.isAdmin">
+          <NuxtLink
+            to="/admin/blog/new"
+            class="bg-ink text-bg inline-flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all hover:opacity-90"
+          >
             ✍️ Write New Post
           </NuxtLink>
         </div>
@@ -121,19 +132,19 @@ function onPageChange(newPage: number) {
     />
 
     <!-- Search & Filter Controls -->
-    <div class="blog-controls-bar">
-      <div class="blog-search-box">
+    <div class="flex flex-col gap-2">
+      <div class="relative w-full">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search articles by title, description or content..."
-          class="guestbook-input search-input"
+          class="bg-card border-line text-ink placeholder:text-soft focus:border-line-strong w-full rounded-xl border px-4 py-2.5 text-sm transition-colors focus:outline-none"
           @input="onSearchInput"
         />
         <button
           v-if="searchQuery"
           type="button"
-          class="search-clear-btn"
+          class="text-soft hover:text-ink absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer border-none bg-transparent p-1 text-xs"
           title="Clear search"
           @click="clearSearch"
         >
@@ -141,25 +152,32 @@ function onPageChange(newPage: number) {
         </button>
       </div>
 
-      <div v-if="searchQuery.trim()" class="search-active-notice">
-        Showing results for "<strong>{{ searchQuery }}</strong>"
-        <button type="button" class="text-link-btn" @click="clearSearch">Clear</button>
+      <div v-if="searchQuery.trim()" class="text-muted flex items-center gap-2 text-xs">
+        Showing results for "<strong>{{ searchQuery }}</strong
+        >"
+        <button
+          type="button"
+          class="text-soft hover:text-ink cursor-pointer border-none bg-transparent p-0 text-xs underline"
+          @click="clearSearch"
+        >
+          Clear
+        </button>
       </div>
     </div>
 
     <!-- Loading State -->
-    <div v-if="status === 'pending'" class="guestbook-empty">
-      <p>Loading articles...</p>
+    <div v-if="status === 'pending'" class="text-soft py-12 text-center text-sm">
+      <p class="m-0">Loading articles...</p>
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="posts.length === 0" class="guestbook-empty">
-      <p v-if="searchQuery">No articles matching "{{ searchQuery }}".</p>
-      <p v-else>No articles published yet. Check back soon!</p>
+    <div v-else-if="posts.length === 0" class="text-soft py-12 text-center text-sm">
+      <p v-if="searchQuery" class="m-0">No articles matching "{{ searchQuery }}".</p>
+      <p v-else class="m-0">No articles published yet. Check back soon!</p>
       <button
         v-if="searchQuery"
         type="button"
-        class="guestbook-button secondary mt-4 inline-flex"
+        class="bg-card border-line text-ink hover:border-line-strong mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-1.5 text-xs font-medium transition-all"
         @click="clearSearch"
       >
         Clear Search Filter
@@ -167,13 +185,9 @@ function onPageChange(newPage: number) {
     </div>
 
     <!-- Articles Grid & Pagination -->
-    <div v-else class="blog-main-content">
-      <div class="blog-posts-grid">
-        <BlogPostCard
-          v-for="post in posts"
-          :key="post.id"
-          :post="post"
-        />
+    <div v-else class="flex flex-col gap-8">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <BlogPostCard v-for="post in posts" :key="post.id" :post="post" />
       </div>
 
       <!-- Pagination Component -->

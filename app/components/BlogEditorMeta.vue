@@ -44,104 +44,119 @@ async function onFileSelected(event: Event) {
 </script>
 
 <template>
-  <div class="editor-meta-fields">
+  <div class="flex flex-col gap-4">
     <!-- Title & Slug Row -->
-    <div class="editor-row">
-      <div class="editor-field flex-2">
-        <label for="post-title">Article Title</label>
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div class="md:col-span-2">
+        <label for="post-title" class="text-muted mb-1.5 block text-xs font-semibold"
+          >Article Title</label
+        >
         <input
           id="post-title"
           :value="title"
           type="text"
           placeholder="e.g., Designing Scalable Systems"
           required
-          class="guestbook-input"
-          @input="emit('update:title', ($event.target as HTMLInputElement).value); emit('title-input')"
+          class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong w-full rounded-lg border px-3 py-2 text-sm focus:outline-none"
+          @input="
+            emit('update:title', ($event.target as HTMLInputElement).value);
+            emit('title-input');
+          "
         />
       </div>
 
-      <div class="editor-field flex-1">
-        <label for="post-slug">
-          URL Slug
+      <div>
+        <div class="mb-1.5 flex items-center justify-between">
+          <label for="post-slug" class="text-muted text-xs font-semibold">URL Slug</label>
           <button
             v-if="slugManual"
             type="button"
-            class="text-link-btn"
+            class="text-soft hover:text-ink cursor-pointer text-xs transition-colors"
             title="Reset to match title"
             @click="emit('reset-slug')"
           >
             (reset to title)
           </button>
-        </label>
-        <div class="slug-input-wrapper">
-          <span class="slug-prefix">/blog/</span>
+        </div>
+        <div class="flex">
+          <span
+            class="border-line bg-elevated text-soft inline-flex items-center rounded-l-lg border border-r-0 px-2.5 text-xs"
+          >
+            /blog/
+          </span>
           <input
             id="post-slug"
             :value="slug"
             type="text"
             placeholder="designing-scalable-systems"
             required
-            class="guestbook-input slug-input"
-            @input="emit('update:slug', ($event.target as HTMLInputElement).value); emit('slug-input')"
+            class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong w-full rounded-r-lg border px-3 py-2 text-sm focus:outline-none"
+            @input="
+              emit('update:slug', ($event.target as HTMLInputElement).value);
+              emit('slug-input');
+            "
           />
         </div>
       </div>
     </div>
 
     <!-- Description / Excerpt -->
-    <div class="editor-field">
-      <label for="post-description">Short Excerpt / SEO Description</label>
+    <div>
+      <label for="post-description" class="text-muted mb-1.5 block text-xs font-semibold"
+        >Short Excerpt / SEO Description</label
+      >
       <textarea
         id="post-description"
         :value="description"
         rows="2"
         placeholder="A brief summary for previews, social sharing, and search engines..."
-        class="guestbook-textarea"
+        class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong w-full resize-y rounded-lg border px-3 py-2 text-sm leading-relaxed focus:outline-none"
         @input="emit('update:description', ($event.target as HTMLTextAreaElement).value)"
       ></textarea>
     </div>
 
     <!-- Featured Header Image -->
-    <div class="editor-field">
-      <label>Featured Header Image</label>
-      <div class="featured-image-controls">
-        <div class="featured-url-input">
-          <input
-            :value="featuredImageUrl"
-            type="url"
-            placeholder="https://res.cloudinary.com/... or upload below"
-            class="guestbook-input"
-            @input="emit('update:featuredImageUrl', ($event.target as HTMLInputElement).value)"
-          />
-        </div>
+    <div>
+      <label class="text-muted mb-1.5 block text-xs font-semibold">Featured Header Image</label>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <input
+          :value="featuredImageUrl"
+          type="url"
+          placeholder="https://res.cloudinary.com/... or upload below"
+          class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong w-full flex-1 rounded-lg border px-3 py-2 text-sm focus:outline-none"
+          @input="emit('update:featuredImageUrl', ($event.target as HTMLInputElement).value)"
+        />
 
-        <div class="featured-upload-cta">
+        <div class="shrink-0">
           <input
             ref="fileInputRef"
             type="file"
             accept="image/*"
-            class="hidden-file-input"
+            class="hidden"
             @change="onFileSelected"
           />
-          <button
+          <UButton
             type="button"
-            class="guestbook-button secondary upload-btn"
-            :disabled="isUploading"
+            color="neutral"
+            variant="outline"
+            :loading="isUploading"
             @click="fileInputRef?.click()"
           >
-            <span v-if="isUploading">Uploading to Cloudinary...</span>
-            <span v-else>📁 Upload Featured Image</span>
-          </button>
+            📁 Upload Image
+          </UButton>
         </div>
       </div>
 
-      <p v-if="uploadError" class="guestbook-alert error mt-2">{{ uploadError }}</p>
+      <p v-if="uploadError" class="mt-2 text-xs text-red-400" role="alert">{{ uploadError }}</p>
 
-      <div v-if="featuredImageUrl" class="featured-preview-box">
-        <img :src="featuredImageUrl" alt="Featured preview" class="featured-preview-thumb" />
+      <div
+        v-if="featuredImageUrl"
+        class="border-line relative mt-3 inline-block overflow-hidden rounded-lg border"
+      >
+        <img :src="featuredImageUrl" alt="Featured preview" class="h-32 w-auto object-cover" />
         <button
           type="button"
-          class="remove-image-btn"
+          class="absolute top-2 right-2 cursor-pointer rounded-md bg-black/70 px-2 py-1 text-xs text-white backdrop-blur-xs transition-colors hover:bg-black"
           title="Remove image"
           @click="emit('update:featuredImageUrl', '')"
         >

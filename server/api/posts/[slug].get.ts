@@ -168,8 +168,10 @@ export default defineEventHandler(async (event) => {
       ...post,
       published: Boolean(post.published),
       allowComments: Boolean(post.allowComments),
-      createdAt: post.createdAt instanceof Date ? post.createdAt.toISOString() : String(post.createdAt),
-      updatedAt: post.updatedAt instanceof Date ? post.updatedAt.toISOString() : String(post.updatedAt),
+      createdAt:
+        post.createdAt instanceof Date ? post.createdAt.toISOString() : String(post.createdAt),
+      updatedAt:
+        post.updatedAt instanceof Date ? post.updatedAt.toISOString() : String(post.updatedAt),
     },
     comments: rootComments,
     reactions: {

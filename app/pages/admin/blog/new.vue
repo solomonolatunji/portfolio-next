@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BlogEditor from "@/components/BlogEditor.vue";
+
 const siteConfig = useSiteConfig();
 
 definePageMeta({
@@ -12,7 +13,7 @@ useHead({
 </script>
 
 <template>
-  <div class="admin-editor-page">
+  <div class="py-2">
     <BlogEditor :is-new="true" />
   </div>
 </template>

@@ -31,7 +31,12 @@ function saveGuestInfo(name: string, email: string) {
   if (email) localStorage.setItem("blog_guest_email", email);
 }
 
-async function submitComment(parentId: number | null = null, replyText?: string, replyName?: string, replyMail?: string) {
+async function submitComment(
+  parentId: number | null = null,
+  replyText?: string,
+  replyName?: string,
+  replyMail?: string
+) {
   const content = parentId ? (replyText || "").trim() : newCommentContent.value.trim();
   const name = parentId ? (replyName || "").trim() : guestName.value.trim();
   const email = parentId ? (replyMail || "").trim() : guestEmail.value.trim();
@@ -113,84 +118,96 @@ function toggleReply(id: number) {
   replyingToId.value = replyingToId.value === id ? null : id;
 }
 
-function handleReplySubmit(payload: { parentId: number; content: string; guestName?: string; guestEmail?: string }) {
+function handleReplySubmit(payload: {
+  parentId: number;
+  content: string;
+  guestName?: string;
+  guestEmail?: string;
+}) {
   submitComment(payload.parentId, payload.content, payload.guestName, payload.guestEmail);
 }
 </script>
 
 <template>
-  <section class="blog-comments-section">
-    <div class="blog-comments-header">
-      <h3>Discussion</h3>
-      <span class="blog-comments-count">
-        {{ comments.length }} {{ comments.length === 1 ? 'comment' : 'comments' }}
+  <section class="mt-12 flex flex-col gap-6">
+    <div class="border-line flex items-center justify-between border-b pb-4">
+      <h3 class="text-ink text-xl font-bold tracking-tight">Discussion</h3>
+      <span class="bg-chip text-soft rounded-full px-2.5 py-0.5 text-xs font-medium">
+        {{ comments.length }} {{ comments.length === 1 ? "comment" : "comments" }}
       </span>
     </div>
 
     <!-- Main Comment Composer -->
-    <div class="blog-comment-composer">
-      <div v-if="currentUser" class="composer-user-meta">
+    <div class="border-line bg-card/80 rounded-xl border p-4 sm:p-5">
+      <div v-if="currentUser" class="mb-3 flex items-center gap-2.5">
         <img
           v-if="currentUser.avatarUrl"
           :src="currentUser.avatarUrl"
           :alt="currentUser.username"
-          class="composer-avatar"
+          class="border-line size-6 rounded-full border object-cover"
         />
-        <span>Commenting as <strong>{{ currentUser.username }}</strong></span>
+        <span class="text-muted text-xs">
+          Commenting as <strong class="text-ink">{{ currentUser.username }}</strong>
+        </span>
       </div>
 
-      <div v-else class="composer-guest-row">
-        <div class="guest-field">
-          <input
-            v-model="guestName"
-            type="text"
-            placeholder="Your name *"
-            required
-            class="guestbook-input guest-input-sm"
-          />
-        </div>
-        <div class="guest-field">
-          <input
-            v-model="guestEmail"
-            type="email"
-            placeholder="Email (optional, for avatar)"
-            class="guestbook-input guest-input-sm"
-          />
-        </div>
-        <div class="guest-github-hint">
+      <div v-else class="mb-3 flex flex-wrap items-center gap-3">
+        <input
+          v-model="guestName"
+          type="text"
+          placeholder="Your name *"
+          required
+          class="border-line bg-elevated text-ink placeholder:text-soft focus:border-line-strong min-w-[140px] flex-1 rounded-lg border px-3 py-1.5 text-xs focus:outline-none"
+        />
+        <input
+          v-model="guestEmail"
+          type="email"
+          placeholder="Email (optional, for avatar)"
+          class="border-line bg-elevated text-ink placeholder:text-soft focus:border-line-strong min-w-[180px] flex-1 rounded-lg border px-3 py-1.5 text-xs focus:outline-none"
+        />
+        <div class="text-soft flex items-center gap-1.5 text-xs">
           <span>or</span>
-          <a href="/api/auth/github" class="github-mini-link" rel="external">
-            <GitHubIcon />
-            Sign in
+          <a
+            href="/api/auth/github"
+            rel="external"
+            class="text-ink inline-flex items-center gap-1 transition-colors hover:underline"
+          >
+            <GitHubIcon class="size-3.5" />
+            <span>Sign in</span>
           </a>
         </div>
       </div>
 
-      <form @submit.prevent="submitComment(null)">
+      <form class="flex flex-col gap-3" @submit.prevent="submitComment(null)">
         <textarea
           v-model="newCommentContent"
           placeholder="Share your thoughts or feedback..."
           rows="3"
           maxlength="1000"
           :disabled="submitting"
-          class="guestbook-textarea w-full"
+          class="border-line bg-elevated text-ink placeholder:text-soft focus:border-line-strong w-full resize-y rounded-lg border p-3 text-sm leading-relaxed focus:outline-none"
         ></textarea>
-        <div class="composer-actions">
-          <button
+
+        <div class="flex justify-end">
+          <UButton
             type="submit"
-            class="guestbook-button"
-            :disabled="submitting || !newCommentContent.trim() || (!currentUser && !guestName.trim())"
+            color="neutral"
+            size="sm"
+            :loading="submitting"
+            :disabled="
+              submitting || !newCommentContent.trim() || (!currentUser && !guestName.trim())
+            "
           >
-            {{ submitting ? 'Posting...' : 'Post Comment' }}
-          </button>
+            Post Comment
+          </UButton>
         </div>
       </form>
     </div>
 
-    <p v-if="error" class="guestbook-alert error" role="alert">{{ error }}</p>
+    <UAlert v-if="error" color="error" variant="subtle" :title="error" />
 
     <!-- Comments List -->
-    <div v-if="comments.length > 0" class="blog-comments-thread">
+    <div v-if="comments.length > 0" class="flex flex-col gap-4">
       <BlogCommentItem
         v-for="comment in comments"
         :key="comment.id"
@@ -206,7 +223,7 @@ function handleReplySubmit(payload: { parentId: number; content: string; guestNa
       />
     </div>
 
-    <p v-else class="blog-comments-empty">
+    <p v-else class="border-line text-soft rounded-xl border border-dashed p-8 text-center text-sm">
       No comments yet. Be the first to share your thoughts!
     </p>
   </section>

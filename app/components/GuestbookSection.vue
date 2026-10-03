@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from "vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import LogOutIcon from "@/components/icons/LogOutIcon.vue";
 import SignaturePad from "@/components/SignaturePad.vue";
+import GuestbookNote from "@/components/GuestbookNote.vue";
 import type { GuestbookEntry, GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 
@@ -82,35 +83,40 @@ async function submitMessage() {
   }
 }
 
-
 onMounted(loadGuestbook);
 </script>
 
 <template>
-  <section class="guestbook-section">
-    <div class="section-heading guestbook-heading">
-      <p class="eyebrow">A note from the internet</p>
-      <h1>Guestbook</h1>
-      <p class="section-copy">Leave a kind word, share what you’re building, or just say hello.</p>
+  <section class="mx-auto mt-6 w-full max-w-190">
+    <div class="mb-8">
+      <p class="text-soft mb-1.5 text-[0.72rem] font-bold tracking-[0.16em] uppercase">
+        A note from the internet
+      </p>
+      <h1 class="text-ink m-0 text-3xl font-bold tracking-tight">Guestbook</h1>
+      <p class="text-muted m-0 mt-2 text-sm">
+        Leave a kind word, share what you’re building, or just say hello.
+      </p>
     </div>
 
-    <div v-if="!loading && user" class="guestbook-composer guestbook-card">
-      <div class="guestbook-user-row">
-        <img
-          v-if="user.avatarUrl"
-          :src="user.avatarUrl"
-          :alt="user.username"
-          class="guestbook-avatar"
-        />
-        <div>
-          <strong>{{ user.username }}</strong>
-          <button type="button" class="guestbook-text-button" @click="signOut">
-            <LogOutIcon />
+    <div
+      v-if="!loading && user"
+      class="bg-card border-line shadow-card mb-8 rounded-2xl border p-5"
+    >
+      <div class="mb-4 flex items-center gap-3">
+        <UAvatar v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.username" size="md" />
+        <div class="flex flex-1 items-center justify-between">
+          <strong class="text-ink text-sm font-semibold">{{ user.username }}</strong>
+          <button
+            type="button"
+            class="text-soft inline-flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-xs transition-colors hover:text-red-400"
+            @click="signOut"
+          >
+            <LogOutIcon class="size-3.5 fill-current" />
             Sign out
           </button>
         </div>
       </div>
-      <form class="guestbook-form" @submit.prevent="submitMessage">
+      <form class="flex flex-col gap-4" @submit.prevent="submitMessage">
         <UFormField label="Message" name="message" required>
           <UTextarea
             v-model="message"
@@ -122,55 +128,36 @@ onMounted(loadGuestbook);
             autoresize
           />
         </UFormField>
-        <SignaturePad
-          ref="signaturePadRef"
-          v-model="signature"
-          :disabled="submitting"
-        />
-        <UButton type="submit" :loading="submitting" :disabled="!message.trim()">
+        <SignaturePad ref="signaturePadRef" v-model="signature" :disabled="submitting" />
+        <UButton type="submit" :loading="submitting" :disabled="!message.trim()" class="self-start">
           Sign guestbook
         </UButton>
       </form>
     </div>
 
-    <div v-else-if="!loading" class="guestbook-login guestbook-card">
-      <p>Want to leave a message?</p>
-      <a href="/api/auth/github" class="guestbook-button" rel="external">
+    <div
+      v-else-if="!loading"
+      class="bg-card border-line shadow-card mb-8 flex flex-col items-center gap-3 rounded-2xl border p-6 text-center"
+    >
+      <p class="text-muted m-0 text-sm">Want to leave a message?</p>
+      <a
+        href="/api/auth/github"
+        class="bg-ink text-bg inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all hover:opacity-90 [&_svg]:size-4 [&_svg]:fill-current"
+        rel="external"
+      >
         <GitHubIcon />
         Sign in with GitHub
       </a>
     </div>
 
-    <p v-if="error" class="guestbook-error" role="alert">{{ error }}</p>
-    <p v-if="loading" class="guestbook-empty">Loading messages...</p>
-    <p v-else-if="!entries.length" class="guestbook-empty">
+    <p v-if="error" class="mb-4 text-xs text-red-400" role="alert">{{ error }}</p>
+    <p v-if="loading" class="text-soft py-8 text-center text-sm">Loading messages...</p>
+    <p v-else-if="!entries.length" class="text-soft py-8 text-center text-sm">
       No messages yet. Be the first to sign!
     </p>
 
-    <div v-else class="guestbook-notes">
-      <article v-for="entry in entries" :key="entry.id" class="guestbook-note">
-        <p class="guestbook-note-message">{{ entry.message }}</p>
-        <div v-if="entry.signatureUrl" class="guestbook-note-signature">
-          <img
-            :src="entry.signatureUrl"
-            :alt="`${entry.username}'s signature`"
-            loading="lazy"
-          />
-        </div>
-        <footer class="guestbook-note-footer">
-          <img
-            v-if="entry.avatarUrl"
-            :src="entry.avatarUrl"
-            :alt="entry.username"
-            class="guestbook-note-avatar"
-            loading="lazy"
-          />
-          <div>
-            <a :href="entry.profileUrl" target="_blank" rel="noreferrer">{{ entry.username }}</a>
-            <time>{{ formatDate(entry.createdAt) }}</time>
-          </div>
-        </footer>
-      </article>
+    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <GuestbookNote v-for="entry in entries" :key="entry.id" :entry="entry" />
     </div>
   </section>
 </template>

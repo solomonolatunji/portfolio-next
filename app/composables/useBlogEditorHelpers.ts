@@ -25,8 +25,7 @@ export function wrapMarkdownSelection(
   const selectedText = currentVal.substring(start, end) || defaultText;
   const replacement = `${prefix}${selectedText}${suffix}`;
 
-  contentRef.value =
-    currentVal.substring(0, start) + replacement + currentVal.substring(end);
+  contentRef.value = currentVal.substring(0, start) + replacement + currentVal.substring(end);
 
   nextTick(() => {
     textarea.focus();
@@ -48,10 +47,7 @@ export function insertMarkdownLinePrefix(
   const lastNewline = currentVal.lastIndexOf("\n", start - 1);
   const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
 
-  contentRef.value =
-    currentVal.substring(0, lineStart) +
-    prefix +
-    currentVal.substring(lineStart);
+  contentRef.value = currentVal.substring(0, lineStart) + prefix + currentVal.substring(lineStart);
 
   nextTick(() => {
     textarea.focus();

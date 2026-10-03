@@ -6,7 +6,10 @@ export default defineEventHandler((event) => {
   const env = getServerEnv();
   if (!env.GITHUB_CLIENT_ID) {
     const url = new URL("/guestbook", getRequestURL(event));
-    url.searchParams.set("error", "GitHub OAuth is not configured. Missing GITHUB_CLIENT_ID on host.");
+    url.searchParams.set(
+      "error",
+      "GitHub OAuth is not configured. Missing GITHUB_CLIENT_ID on host."
+    );
     return sendRedirect(event, url.toString(), 302);
   }
 

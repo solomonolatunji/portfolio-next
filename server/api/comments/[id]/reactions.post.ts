@@ -25,7 +25,13 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody<{ reactionType?: string }>(event).catch(() => ({}));
-  const reactionType = (body && typeof body === "object" && "reactionType" in body && typeof body.reactionType === "string" ? body.reactionType.trim() : "") || "heart";
+  const reactionType =
+    (body &&
+    typeof body === "object" &&
+    "reactionType" in body &&
+    typeof body.reactionType === "string"
+      ? body.reactionType.trim()
+      : "") || "heart";
 
   const [existing] = await db
     .select({ id: commentReactions.id })

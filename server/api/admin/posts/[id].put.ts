@@ -59,13 +59,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 409, statusMessage: "Another post already uses this slug." });
   }
 
-  const description = body?.description !== undefined ? body.description.trim() : existing.description;
+  const description =
+    body?.description !== undefined ? body.description.trim() : existing.description;
   const content = body?.content !== undefined ? body.content : existing.content;
   const featuredImageUrl =
-    body?.featuredImageUrl !== undefined ? body.featuredImageUrl.trim() || null : existing.featuredImageUrl;
+    body?.featuredImageUrl !== undefined
+      ? body.featuredImageUrl.trim() || null
+      : existing.featuredImageUrl;
   const published = body?.published !== undefined ? Boolean(body.published) : existing.published;
-  const featured = body?.featured !== undefined ? Boolean(body.featured) : Boolean(existing.featured);
-  const allowComments = body?.allowComments !== undefined ? Boolean(body.allowComments) : Boolean(existing.allowComments);
+  const featured =
+    body?.featured !== undefined ? Boolean(body.featured) : Boolean(existing.featured);
+  const allowComments =
+    body?.allowComments !== undefined
+      ? Boolean(body.allowComments)
+      : Boolean(existing.allowComments);
   const readTimeMinutes = calculateReadTime(content);
 
   await db

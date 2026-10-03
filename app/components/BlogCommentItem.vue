@@ -3,6 +3,7 @@ import { ref } from "vue";
 import type { BlogComment } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
+
 const siteConfig = useSiteConfig();
 
 const props = defineProps<{
@@ -17,7 +18,10 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "toggle-reaction", comment: BlogComment): void;
   (e: "toggle-reply", id: number): void;
-  (e: "submit-reply", payload: { parentId: number; content: string; guestName?: string; guestEmail?: string }): void;
+  (
+    e: "submit-reply",
+    payload: { parentId: number; content: string; guestName?: string; guestEmail?: string }
+  ): void;
 }>();
 
 const replyContent = ref("");
@@ -37,80 +41,95 @@ function onReplySubmit() {
 </script>
 
 <template>
-  <article class="blog-comment-node">
-    <div class="comment-author-row">
+  <article
+    class="border-line bg-card/60 hover:border-line-strong/60 flex flex-col gap-3 rounded-xl border p-4 transition-colors duration-150 sm:p-5"
+  >
+    <!-- Comment Author Row -->
+    <div class="flex items-center gap-3">
       <img
         v-if="comment.author.avatarUrl"
         :src="comment.author.avatarUrl"
         :alt="comment.author.username"
-        class="comment-avatar"
+        class="border-line bg-chip size-9 rounded-full border object-cover"
         loading="lazy"
       />
-      <div class="comment-author-info">
-        <div class="author-name-group">
+      <div class="flex min-w-0 flex-1 flex-col">
+        <div class="flex flex-wrap items-center gap-2">
           <a
             v-if="comment.author.profileUrl"
             :href="comment.author.profileUrl"
             target="_blank"
             rel="noreferrer"
-            class="author-name-link"
+            class="text-ink text-sm font-semibold transition-colors hover:underline"
           >
             {{ comment.author.username }}
           </a>
-          <span v-else class="author-name-static">{{ comment.author.username }}</span>
+          <span v-else class="text-ink text-sm font-semibold">
+            {{ comment.author.username }}
+          </span>
 
           <span
             v-if="comment.author.username === siteConfig.adminUsername"
-            class="author-badge"
+            class="border-line-strong bg-chip text-ink rounded-full border px-2 py-0.5 text-[0.68rem] font-semibold"
           >
             Author
           </span>
         </div>
-        <time>{{ formatDate(comment.createdAt) }}</time>
+        <time class="text-soft text-xs">{{ formatDate(comment.createdAt) }}</time>
       </div>
     </div>
 
-    <p class="comment-body">{{ comment.content }}</p>
+    <!-- Comment Body -->
+    <p class="text-muted text-sm leading-relaxed break-words whitespace-pre-wrap">
+      {{ comment.content }}
+    </p>
 
     <!-- Actions: Reaction & Reply -->
-    <div class="comment-actions-bar">
+    <div class="flex items-center gap-3 pt-1">
       <button
         type="button"
-        class="comment-reaction-btn"
-        :class="{ active: comment.userReacted }"
+        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all"
+        :class="
+          comment.userReacted
+            ? 'border-line-strong bg-chip text-ink'
+            : 'border-line text-soft hover:border-line-strong hover:text-ink bg-transparent'
+        "
         title="Like this comment"
         @click="emit('toggle-reaction', comment)"
       >
-        <span>{{ comment.userReacted ? '❤️' : '🤍' }}</span>
-        <span v-if="comment.reactionCount > 0" class="comment-reaction-count">
+        <span>{{ comment.userReacted ? "❤️" : "🤍" }}</span>
+        <span v-if="comment.reactionCount > 0" class="tabular-nums">
           {{ comment.reactionCount }}
         </span>
       </button>
 
       <button
         type="button"
-        class="reply-trigger-btn"
+        class="text-soft hover:text-ink cursor-pointer text-xs font-medium transition-colors"
         @click="emit('toggle-reply', comment.id)"
       >
-        {{ replyingToId === comment.id ? 'Cancel' : 'Reply' }}
+        {{ replyingToId === comment.id ? "Cancel" : "Reply" }}
       </button>
     </div>
 
     <!-- Inline Reply Composer -->
-    <div v-if="replyingToId === comment.id" class="inline-reply-composer">
-      <div v-if="!currentUser" class="composer-guest-row mb-2">
+    <div
+      v-if="replyingToId === comment.id"
+      class="border-line bg-elevated/80 mt-2 flex flex-col gap-3 rounded-lg border p-3 sm:p-4"
+    >
+      <div v-if="!currentUser" class="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <input
           v-model="replyGuestName"
           type="text"
           placeholder="Your name *"
           required
-          class="guestbook-input guest-input-sm"
+          class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong rounded-lg border px-3 py-1.5 text-xs focus:outline-none"
         />
         <input
           v-model="replyGuestEmail"
           type="email"
           placeholder="Email (optional)"
-          class="guestbook-input guest-input-sm"
+          class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong rounded-lg border px-3 py-1.5 text-xs focus:outline-none"
         />
       </div>
 
@@ -120,77 +139,95 @@ function onReplySubmit() {
         rows="2"
         maxlength="1000"
         :disabled="submitting"
-        class="guestbook-textarea w-full"
+        class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong w-full resize-y rounded-lg border p-2.5 text-xs leading-relaxed focus:outline-none"
         autofocus
       ></textarea>
-      <div class="inline-reply-actions">
-        <button
-          type="button"
-          class="cancel-btn"
+
+      <div class="flex items-center justify-end gap-2">
+        <UButton
+          size="xs"
+          color="neutral"
+          variant="ghost"
           :disabled="submitting"
           @click="emit('toggle-reply', comment.id)"
         >
           Cancel
-        </button>
-        <button
-          type="button"
-          class="guestbook-button"
+        </UButton>
+        <UButton
+          size="xs"
+          color="neutral"
+          :loading="submitting"
           :disabled="submitting || !replyContent.trim() || (!currentUser && !replyGuestName.trim())"
           @click="onReplySubmit"
         >
-          {{ submitting ? 'Replying...' : 'Reply' }}
-        </button>
+          Reply
+        </UButton>
       </div>
     </div>
 
     <!-- Nested Replies -->
-    <div v-if="comment.replies && comment.replies.length > 0" class="nested-replies-list">
-      <article v-for="reply in comment.replies" :key="reply.id" class="nested-reply-node">
-        <div class="comment-author-row">
+    <div
+      v-if="comment.replies && comment.replies.length > 0"
+      class="border-line mt-2 flex flex-col gap-3 border-l-2 pl-3 sm:pl-5"
+    >
+      <article
+        v-for="reply in comment.replies"
+        :key="reply.id"
+        class="border-line/60 bg-elevated/40 flex flex-col gap-2 rounded-lg border p-3"
+      >
+        <div class="flex items-center gap-2.5">
           <img
             v-if="reply.author.avatarUrl"
             :src="reply.author.avatarUrl"
             :alt="reply.author.username"
-            class="comment-avatar small"
+            class="border-line bg-chip size-7 rounded-full border object-cover"
             loading="lazy"
           />
-          <div class="comment-author-info">
-            <div class="author-name-group">
+          <div class="flex min-w-0 flex-1 flex-col">
+            <div class="flex flex-wrap items-center gap-2">
               <a
                 v-if="reply.author.profileUrl"
                 :href="reply.author.profileUrl"
                 target="_blank"
                 rel="noreferrer"
-                class="author-name-link"
+                class="text-ink text-xs font-semibold transition-colors hover:underline"
               >
                 {{ reply.author.username }}
               </a>
-              <span v-else class="author-name-static">{{ reply.author.username }}</span>
+              <span v-else class="text-ink text-xs font-semibold">
+                {{ reply.author.username }}
+              </span>
 
               <span
                 v-if="reply.author.username === siteConfig.adminUsername"
-                class="author-badge"
+                class="border-line-strong bg-chip py-0.2 text-ink rounded-full border px-1.5 text-[0.62rem] font-semibold"
               >
                 Author
               </span>
             </div>
-            <time>{{ formatDate(reply.createdAt) }}</time>
+            <time class="text-soft text-[0.68rem]">{{ formatDate(reply.createdAt) }}</time>
           </div>
         </div>
 
-        <p class="comment-body">{{ reply.content }}</p>
+        <p class="text-muted text-xs leading-relaxed break-words whitespace-pre-wrap">
+          {{ reply.content }}
+        </p>
 
         <!-- Reaction on Reply -->
-        <div class="comment-actions-bar">
+        <div class="flex items-center gap-2 pt-0.5">
           <button
             type="button"
-            class="comment-reaction-btn"
-            :class="{ active: reply.userReacted }"
+            class="inline-flex cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 text-[0.68rem] font-medium transition-all"
+            :class="
+              reply.userReacted
+                ? 'border-line-strong bg-chip text-ink'
+                : 'border-line text-soft hover:border-line-strong hover:text-ink bg-transparent'
+            "
             title="Like this reply"
             @click="emit('toggle-reaction', reply)"
           >
-            <span>{{ reply.userReacted ? '❤️' : '🤍' }}</span>
-            <span v-if="reply.reactionCount > 0" class="comment-reaction-count">
+            <span>{{ reply.userReacted ? "❤️" : "🤍" }}</span>
+            <span v-if="reply.reactionCount > 0" class="tabular-nums">
               {{ reply.reactionCount }}
             </span>
           </button>

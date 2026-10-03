@@ -47,9 +47,7 @@
       "indexes": {
         "idx_guestbook_entries_created_at": {
           "name": "idx_guestbook_entries_created_at",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -57,9 +55,7 @@
       "compositePrimaryKeys": {
         "guestbook_entries_id": {
           "name": "guestbook_entries_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -93,9 +89,7 @@
       "indexes": {
         "idx_sessions_expires_at": {
           "name": "idx_sessions_expires_at",
-          "columns": [
-            "expires_at"
-          ],
+          "columns": ["expires_at"],
           "isUnique": false
         }
       },
@@ -103,9 +97,7 @@
       "compositePrimaryKeys": {
         "sessions_id": {
           "name": "sessions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -156,9 +148,7 @@
       "compositePrimaryKeys": {
         "users_id": {
           "name": "users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

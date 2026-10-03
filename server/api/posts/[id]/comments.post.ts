@@ -24,7 +24,10 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Post not found." });
   }
   if (!post.allowComments) {
-    throw createError({ statusCode: 403, statusMessage: "Comments are disabled for this article." });
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Comments are disabled for this article.",
+    });
   }
 
   const body = await readBody<{
@@ -55,7 +58,10 @@ export default defineEventHandler(async (event) => {
   if (actor.isGuest) {
     const rawName = body?.guestName?.trim();
     if (!rawName) {
-      throw createError({ statusCode: 400, statusMessage: "Please provide your name or sign in with GitHub." });
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Please provide your name or sign in with GitHub.",
+      });
     }
     guestName = rawName.slice(0, 128);
     authorName = guestName;

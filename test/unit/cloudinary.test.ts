@@ -4,10 +4,7 @@ const mockEnv = vi.hoisted(() => ({}) as Record<string, string | undefined>);
 
 vi.mock("~~/env", () => ({ env: mockEnv }));
 
-import {
-  isCloudinaryConfigured,
-  uploadSignatureToCloudinary,
-} from "~~/server/utils/cloudinary";
+import { isCloudinaryConfigured, uploadSignatureToCloudinary } from "~~/server/utils/cloudinary";
 
 describe("Cloudinary utility", () => {
   beforeEach(() => {

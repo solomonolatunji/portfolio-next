@@ -1,9 +1,10 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { computed, ref } from "vue";
 import type { BlogPost } from "@/interfaces/blog";
 import { renderMarkdown } from "@/utils/markdown";
 import BlogEditorMeta from "@/components/BlogEditorMeta.vue";
 import BlogEditorToolbar from "@/components/BlogEditorToolbar.vue";
+import BlogProse from "@/components/BlogProse.vue";
 import {
   slugify,
   wrapMarkdownSelection,
@@ -39,26 +40,12 @@ const isUploadingInline = ref(false);
 const errorMessage = ref<string | null>(null);
 const successMessage = ref<string | null>(null);
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
+
 const tabs = [
   { value: "write", label: "Write" },
   { value: "preview", label: "Preview" },
   { value: "split", label: "Split View" },
 ] as const;
-
-const proseClass = [
-  "text-[1.02rem] leading-[1.75] text-gray-300",
-  "[&_h1]:mt-8 [&_h1]:mb-3 [&_h1]:text-[1.8rem] [&_h1]:font-bold [&_h1]:leading-snug [&_h1]:text-ink",
-  "[&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:border-b [&_h2]:border-line [&_h2]:pb-1.5 [&_h2]:text-[1.45rem] [&_h2]:font-bold [&_h2]:leading-snug [&_h2]:text-ink",
-  "[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-[1.2rem] [&_h3]:font-bold [&_h3]:leading-snug [&_h3]:text-ink",
-  "[&_p]:mb-5 [&_strong]:font-bold [&_strong]:text-ink",
-  "[&_a]:text-blue-400 [&_a]:underline [&_a]:underline-offset-[3px] [&_a:hover]:text-blue-300",
-  "[&_ul]:mb-5 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:mb-5 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:mb-1",
-  "[&_blockquote]:mb-5 [&_blockquote]:border-l-[3px] [&_blockquote]:border-line-strong [&_blockquote]:pl-4 [&_blockquote]:text-muted",
-  "[&_code]:rounded [&_code]:bg-chip [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.88em]",
-  "[&_pre]:mb-5 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:border [&_pre]:border-line [&_pre]:bg-elevated [&_pre]:p-4",
-  "[&_pre_code]:bg-transparent [&_pre_code]:p-0",
-  "[&_img]:my-5 [&_img]:max-w-full [&_img]:rounded-lg [&_hr]:my-8 [&_hr]:border-line",
-].join(" ");
 
 function onTitleInput() {
   if (!slugManual.value) slug.value = slugify(title.value);
@@ -147,24 +134,31 @@ async function savePost(publishState?: boolean) {
 }
 </script>
 
-</script>
-
 <template>
   <div class="flex flex-col gap-6">
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
-        <NuxtLink to="/admin/blog" class="text-[0.8rem] text-soft transition-colors hover:text-ink">
+        <NuxtLink to="/admin/blog" class="text-soft hover:text-ink text-xs transition-colors">
           ← Back to Blog Management
         </NuxtLink>
-        <h2 class="mt-1 text-[1.6rem] font-bold text-ink">{{ isNew ? "Create New Article" : "Edit Article" }}</h2>
+        <h2 class="text-ink mt-1 text-2xl font-bold tracking-tight">
+          {{ isNew ? "Create New Article" : "Edit Article" }}
+        </h2>
       </div>
 
       <div class="flex items-center gap-3">
-        <UButton color="neutral" variant="outline" :disabled="isSubmitting" @click="savePost(false)">
+        <UButton
+          color="neutral"
+          variant="outline"
+          :disabled="isSubmitting"
+          @click="savePost(false)"
+        >
           Save as Draft
         </UButton>
         <UButton color="neutral" :disabled="isSubmitting" @click="savePost(true)">
-          {{ isSubmitting ? "Saving..." : published ? "Update & Keep Published" : "Publish Article" }}
+          {{
+            isSubmitting ? "Saving..." : published ? "Update & Keep Published" : "Publish Article"
+          }}
         </UButton>
       </div>
     </div>
@@ -186,9 +180,9 @@ async function savePost(publishState?: boolean) {
 
       <div class="flex w-full flex-col gap-2">
         <div class="flex items-center justify-between">
-          <label class="text-[0.82rem] font-semibold text-muted">Article Content (Markdown)</label>
+          <label class="text-muted text-xs font-semibold">Article Content (Markdown)</label>
 
-          <div class="flex gap-1 rounded-lg border border-line bg-card p-[0.2rem]">
+          <div class="border-line bg-card flex gap-1 rounded-lg border p-1">
             <UButton
               v-for="tab in tabs"
               :key="tab.value"
@@ -212,37 +206,49 @@ async function savePost(publishState?: boolean) {
         />
 
         <div
-          class="flex min-h-[400px] flex-col overflow-hidden rounded-b-lg border border-line bg-card md:flex-row"
+          class="border-line bg-card flex min-h-[400px] flex-col overflow-hidden rounded-b-lg border md:flex-row"
           :class="activeTab === 'preview' ? 'rounded-t-lg' : 'border-t-0'"
         >
           <div
             v-show="activeTab === 'write' || activeTab === 'split'"
             class="min-w-0 flex-1"
-            :class="activeTab === 'split' ? 'border-b border-line md:border-b-0 md:border-r' : ''"
+            :class="activeTab === 'split' ? 'border-line border-b md:border-r md:border-b-0' : ''"
           >
             <textarea
               ref="textareaRef"
               v-model="content"
               rows="18"
               placeholder="Write your article in Markdown..."
-              class="size-full min-h-[420px] resize-y bg-transparent p-4 font-mono text-[0.9rem] leading-relaxed text-ink outline-none placeholder:text-soft"
+              class="text-ink placeholder:text-soft size-full min-h-[420px] resize-y bg-transparent p-4 font-mono text-sm leading-relaxed outline-none"
             ></textarea>
           </div>
 
           <div
             v-show="activeTab === 'preview' || activeTab === 'split'"
-            :class="proseClass"
-            class="max-h-[600px] min-w-0 flex-1 overflow-y-auto bg-black/20 px-[1.4rem] py-4"
-            v-html="renderedPreview"
-          ></div>
+            class="max-h-[600px] min-w-0 flex-1 overflow-y-auto bg-black/20 p-4"
+          >
+            <BlogProse :content="renderedPreview" class="!my-0" />
+          </div>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-4">
+      <div class="border-line flex flex-wrap items-center justify-between gap-4 border-t pt-4">
         <div class="flex flex-col gap-2.5">
-          <USwitch v-model="published" color="success" label="Publish immediately (visible to the public)" />
-          <USwitch v-model="featured" color="success" label="⭐ Feature this article (Pin to top of blog, max 3)" />
-          <USwitch v-model="allowComments" color="success" label="Allow comments & replies on this article" />
+          <USwitch
+            v-model="published"
+            color="success"
+            label="Publish immediately (visible to the public)"
+          />
+          <USwitch
+            v-model="featured"
+            color="success"
+            label="⭐ Feature this article (Pin to top of blog, max 3)"
+          />
+          <USwitch
+            v-model="allowComments"
+            color="success"
+            label="Allow comments & replies on this article"
+          />
         </div>
 
         <div class="flex items-center gap-3">

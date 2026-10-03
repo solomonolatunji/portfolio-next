@@ -47,9 +47,7 @@
       "indexes": {
         "idx_guestbook_entries_created_at": {
           "name": "idx_guestbook_entries_created_at",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -57,9 +55,7 @@
       "compositePrimaryKeys": {
         "guestbook_entries_id": {
           "name": "guestbook_entries_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -115,23 +111,17 @@
       "indexes": {
         "idx_post_comments_post_id": {
           "name": "idx_post_comments_post_id",
-          "columns": [
-            "post_id"
-          ],
+          "columns": ["post_id"],
           "isUnique": false
         },
         "idx_post_comments_parent_id": {
           "name": "idx_post_comments_parent_id",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         },
         "idx_post_comments_created_at": {
           "name": "idx_post_comments_created_at",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -139,9 +129,7 @@
       "compositePrimaryKeys": {
         "post_comments_id": {
           "name": "post_comments_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -190,18 +178,12 @@
       "indexes": {
         "idx_post_reactions_unique": {
           "name": "idx_post_reactions_unique",
-          "columns": [
-            "post_id",
-            "user_id",
-            "reaction_type"
-          ],
+          "columns": ["post_id", "user_id", "reaction_type"],
           "isUnique": true
         },
         "idx_post_reactions_post_id": {
           "name": "idx_post_reactions_post_id",
-          "columns": [
-            "post_id"
-          ],
+          "columns": ["post_id"],
           "isUnique": false
         }
       },
@@ -209,9 +191,7 @@
       "compositePrimaryKeys": {
         "post_reactions_id": {
           "name": "post_reactions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -307,23 +287,17 @@
       "indexes": {
         "idx_posts_slug": {
           "name": "idx_posts_slug",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         },
         "idx_posts_published": {
           "name": "idx_posts_published",
-          "columns": [
-            "published"
-          ],
+          "columns": ["published"],
           "isUnique": false
         },
         "idx_posts_created_at": {
           "name": "idx_posts_created_at",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -331,9 +305,7 @@
       "compositePrimaryKeys": {
         "posts_id": {
           "name": "posts_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -367,9 +339,7 @@
       "indexes": {
         "idx_sessions_expires_at": {
           "name": "idx_sessions_expires_at",
-          "columns": [
-            "expires_at"
-          ],
+          "columns": ["expires_at"],
           "isUnique": false
         }
       },
@@ -377,9 +347,7 @@
       "compositePrimaryKeys": {
         "sessions_id": {
           "name": "sessions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},
@@ -430,9 +398,7 @@
       "compositePrimaryKeys": {
         "users_id": {
           "name": "users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {},

@@ -54,7 +54,9 @@ function normalizeDeviceLabel(value?: string) {
 
   return normalized
     .split(/\s+/)
-    .map((part) => DEVICE_NAME_MAP[part.toLowerCase()] || (part.charAt(0).toUpperCase() + part.slice(1)))
+    .map(
+      (part) => DEVICE_NAME_MAP[part.toLowerCase()] || part.charAt(0).toUpperCase() + part.slice(1)
+    )
     .join(" ");
 }
 

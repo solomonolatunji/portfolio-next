@@ -5,11 +5,7 @@ export function isCloudinaryConfigured(): boolean {
   if (env.CLOUDINARY_URL) {
     return true;
   }
-  return Boolean(
-    env.CLOUDINARY_CLOUD_NAME &&
-      env.CLOUDINARY_API_KEY &&
-      env.CLOUDINARY_API_SECRET
-  );
+  return Boolean(env.CLOUDINARY_CLOUD_NAME && env.CLOUDINARY_API_KEY && env.CLOUDINARY_API_SECRET);
 }
 
 export function configureCloudinary(): void {
@@ -18,11 +14,7 @@ export function configureCloudinary(): void {
     cloudinary.config({
       cloudinary_url: url,
     });
-  } else if (
-    env.CLOUDINARY_CLOUD_NAME &&
-    env.CLOUDINARY_API_KEY &&
-    env.CLOUDINARY_API_SECRET
-  ) {
+  } else if (env.CLOUDINARY_CLOUD_NAME && env.CLOUDINARY_API_KEY && env.CLOUDINARY_API_SECRET) {
     cloudinary.config({
       cloud_name: env.CLOUDINARY_CLOUD_NAME,
       api_key: env.CLOUDINARY_API_KEY,

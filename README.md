@@ -24,10 +24,10 @@ A modern portfolio, blog engine, and interactive guestbook built with Nuxt 4, Vu
 ## Tech Stack
 
 - **Framework**: Nuxt 4 / Vue 3 (Composition API)
-- **Styling**: Tailwind CSS & scoped responsive styles
+- **Styling**: Tailwind CSS v4 & Nuxt UI v4 (`@nuxt/ui`)
 - **Database & ORM**: MySQL with Drizzle ORM
 - **Media Storage**: Cloudinary (for blog images and guestbook drawings)
-- **Icons & Avatars**: Nuxt UI, Heroicons, DiceBear API
+- **Icons & Avatars**: Nuxt UI, DiceBear API
 - **Testing**: Vitest, @nuxt/test-utils
 
 ## Getting Started

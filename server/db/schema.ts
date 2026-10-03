@@ -1,4 +1,13 @@
-import { boolean, int, index, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
+import {
+  boolean,
+  int,
+  index,
+  mysqlTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  varchar,
+} from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: varchar("id", { length: 64 }).primaryKey(),
@@ -99,7 +108,11 @@ export const commentReactions = mysqlTable(
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("idx_comment_reactions_unique").on(table.commentId, table.userId, table.reactionType),
+    uniqueIndex("idx_comment_reactions_unique").on(
+      table.commentId,
+      table.userId,
+      table.reactionType
+    ),
     index("idx_comment_reactions_comment_id").on(table.commentId),
   ]
 );

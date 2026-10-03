@@ -24,8 +24,10 @@ export default defineEventHandler(async (event) => {
       published: Boolean(post.published),
       featured: Boolean(post.featured),
       allowComments: Boolean(post.allowComments),
-      createdAt: post.createdAt instanceof Date ? post.createdAt.toISOString() : String(post.createdAt),
-      updatedAt: post.updatedAt instanceof Date ? post.updatedAt.toISOString() : String(post.updatedAt),
+      createdAt:
+        post.createdAt instanceof Date ? post.createdAt.toISOString() : String(post.createdAt),
+      updatedAt:
+        post.updatedAt instanceof Date ? post.updatedAt.toISOString() : String(post.updatedAt),
     },
   };
 });

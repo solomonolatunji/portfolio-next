@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import type { BlogReactionsSummary, BlogReactionType } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 
@@ -29,7 +29,6 @@ async function toggleReaction(type: BlogReactionType) {
   if (toggling.value) return;
   toggling.value = true;
 
-  // Optimistic update
   const hasReacted = reactions.value.userReactions.includes(type);
   if (hasReacted) {
     reactions.value.userReactions = reactions.value.userReactions.filter((r) => r !== type);
@@ -51,7 +50,6 @@ async function toggleReaction(type: BlogReactionType) {
     });
     reactions.value = res.reactions;
   } catch (err) {
-    // Revert optimistic update on failure
     console.error("Failed to toggle reaction:", err);
   } finally {
     toggling.value = false;
@@ -60,20 +58,33 @@ async function toggleReaction(type: BlogReactionType) {
 </script>
 
 <template>
-  <div class="blog-reactions-bar">
-    <span class="blog-reactions-title">Reactions</span>
-    <div class="blog-reactions-list">
+  <div
+    class="border-line bg-card/60 my-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border px-5 py-3.5 backdrop-blur-xs"
+  >
+    <div class="text-muted flex items-center gap-2 text-sm font-medium">
+      <span>Reactions</span>
+      <span v-if="reactions.total > 0" class="bg-chip text-soft rounded-full px-2 py-0.5 text-xs">
+        {{ reactions.total }}
+      </span>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
       <button
         v-for="btn in reactionButtons"
         :key="btn.type"
         type="button"
-        class="blog-reaction-btn"
-        :class="{ active: reactions.userReactions.includes(btn.type) }"
-        :title="currentUser ? `React with ${btn.label}` : 'Sign in with GitHub to react'"
+        class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+        :class="
+          reactions.userReactions.includes(btn.type)
+            ? 'border-line-strong bg-chip text-ink shadow-xs'
+            : 'border-line text-muted hover:border-line-strong hover:bg-card hover:text-ink bg-transparent'
+        "
+        :title="`React with ${btn.label}`"
+        :disabled="toggling"
         @click="toggleReaction(btn.type)"
       >
-        <span class="reaction-emoji">{{ btn.emoji }}</span>
-        <span v-if="reactions.counts[btn.type] > 0" class="reaction-count">
+        <span class="text-sm leading-none">{{ btn.emoji }}</span>
+        <span v-if="reactions.counts[btn.type] > 0" class="tabular-nums">
           {{ reactions.counts[btn.type] }}
         </span>
       </button>

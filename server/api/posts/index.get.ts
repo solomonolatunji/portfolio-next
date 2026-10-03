@@ -70,10 +70,7 @@ export default defineEventHandler(async (event) => {
     ? and(eq(posts.published, true), searchCondition)
     : eq(posts.published, true);
 
-  const [totalResult] = await db
-    .select({ count: count() })
-    .from(posts)
-    .where(whereClause);
+  const [totalResult] = await db.select({ count: count() }).from(posts).where(whereClause);
 
   const total = Number(totalResult?.count || 0);
   const totalPages = Math.max(1, Math.ceil(total / limit));

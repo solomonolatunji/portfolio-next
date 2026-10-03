@@ -1,5 +1,5 @@
 <template>
-  <div class="portfolio-page">
+  <div class="flex flex-col gap-14">
     <HeroSection />
     <ProjectsSection />
   </div>

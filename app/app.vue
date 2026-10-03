@@ -14,7 +14,9 @@ const isAdmin = computed(() => route.path.startsWith("/admin"));
 const { data: authData } = await useAsyncData(
   "auth-user",
   async () => {
-    return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({ user: null }));
+    return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({
+      user: null,
+    }));
   },
   { default: () => ({ user: null }) }
 );
@@ -25,10 +27,10 @@ useHead(() => ({
   title: isGuestbook.value
     ? siteConfig.pageTitle("Guestbook")
     : isBlog.value
-    ? siteConfig.pageTitle("Blog")
-    : isAdmin.value
-    ? siteConfig.pageTitle("Admin Blog")
-    : siteConfig.pageTitle(),
+      ? siteConfig.pageTitle("Blog")
+      : isAdmin.value
+        ? siteConfig.pageTitle("Admin Blog")
+        : siteConfig.pageTitle(),
   link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
 }));
 
@@ -45,29 +47,44 @@ useSeoMeta({
   <UApp>
     <main class="mx-auto flex min-h-dvh w-[min(980px,calc(100%-2rem))] flex-1 flex-col pt-9 pb-11">
       <nav
-        class="mx-auto flex w-full max-w-190 items-center justify-between gap-2.5 text-[0.7rem] font-bold tracking-[0.16em] text-soft uppercase"
+        class="text-soft mx-auto flex w-full max-w-190 items-center justify-between gap-2.5 text-[0.7rem] font-bold tracking-[0.16em] uppercase"
         aria-label="Primary navigation"
       >
-        <NuxtLink to="/" class="text-xs tracking-[0.08em] text-ink">
-          {{ siteConfig.shortName }}<span class="mx-0.5 text-soft">/</span>26
+        <NuxtLink to="/" class="text-ink text-xs tracking-[0.08em]">
+          {{ siteConfig.shortName }}<span class="text-soft mx-0.5">/</span>26
         </NuxtLink>
         <div class="flex items-center gap-2.5">
-          <NuxtLink to="/" class="transition-colors hover:text-ink" :class="{ 'text-ink': isHome }">Home</NuxtLink>
+          <NuxtLink to="/" class="hover:text-ink transition-colors" :class="{ 'text-ink': isHome }"
+            >Home</NuxtLink
+          >
           <span aria-hidden="true">/</span>
-          <NuxtLink to="/blog" class="transition-colors hover:text-ink" :class="{ 'text-ink': isBlog }">Blog</NuxtLink>
+          <NuxtLink
+            to="/blog"
+            class="hover:text-ink transition-colors"
+            :class="{ 'text-ink': isBlog }"
+            >Blog</NuxtLink
+          >
           <span aria-hidden="true">/</span>
-          <NuxtLink to="/guestbook" class="transition-colors hover:text-ink" :class="{ 'text-ink': isGuestbook }">
+          <NuxtLink
+            to="/guestbook"
+            class="hover:text-ink transition-colors"
+            :class="{ 'text-ink': isGuestbook }"
+          >
             Guestbook
           </NuxtLink>
           <template v-if="currentUser?.isAdmin">
             <span aria-hidden="true">/</span>
-            <NuxtLink to="/admin/blog" class="transition-colors hover:text-ink" :class="{ 'text-ink': isAdmin }">
+            <NuxtLink
+              to="/admin/blog"
+              class="hover:text-ink transition-colors"
+              :class="{ 'text-ink': isAdmin }"
+            >
               Admin
             </NuxtLink>
           </template>
           <a
             :href="profileLinks[0].href"
-            class="ml-1.5 inline-flex size-8 items-center justify-center rounded-full border border-line text-muted hover:border-line-strong hover:text-ink [&_svg]:size-4 [&_svg]:fill-current"
+            class="border-line text-muted hover:border-line-strong hover:text-ink ml-1.5 inline-flex size-8 items-center justify-center rounded-full border [&_svg]:size-4 [&_svg]:fill-current"
             aria-label="Open Solomon's GitHub"
             target="_blank"
             rel="noreferrer"

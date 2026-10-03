@@ -73,7 +73,9 @@ describe("avatar utils", () => {
     expect(getDiceBearAvatar("")).toContain("seed=Guest");
 
     // resolveAvatarUrl returns existing avatar if provided
-    expect(resolveAvatarUrl("John", "https://github.com/john.png")).toBe("https://github.com/john.png");
+    expect(resolveAvatarUrl("John", "https://github.com/john.png")).toBe(
+      "https://github.com/john.png"
+    );
 
     // resolveAvatarUrl returns dicebear url if avatar is missing
     expect(resolveAvatarUrl("Alice", null)).toContain("seed=Alice");

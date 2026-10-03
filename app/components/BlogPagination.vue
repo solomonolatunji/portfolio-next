@@ -41,10 +41,14 @@ const pageNumbers = computed(() => {
 </script>
 
 <template>
-  <nav v-if="totalPages > 1" class="blog-pagination" aria-label="Blog pages pagination">
+  <nav
+    v-if="totalPages > 1"
+    class="mt-8 flex items-center justify-center gap-2 select-none"
+    aria-label="Blog pages pagination"
+  >
     <button
       type="button"
-      class="pagination-btn pagination-nav"
+      class="border-line bg-card text-muted hover:text-ink hover:border-line-strong cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-medium transition-all disabled:pointer-events-none disabled:opacity-30"
       :disabled="currentPage <= 1"
       aria-label="Go to previous page"
       @click="goToPage(currentPage - 1)"
@@ -52,14 +56,14 @@ const pageNumbers = computed(() => {
       ← Prev
     </button>
 
-    <div class="pagination-numbers">
+    <div class="flex items-center gap-1.5">
       <template v-for="(p, idx) in pageNumbers" :key="idx">
-        <span v-if="p === '...'" class="pagination-ellipsis">…</span>
+        <span v-if="p === '...'" class="text-soft px-1 text-xs">…</span>
         <button
           v-else
           type="button"
-          class="pagination-btn pagination-number"
-          :class="{ active: p === currentPage }"
+          class="border-line bg-card text-muted hover:text-ink hover:border-line-strong flex size-8 cursor-pointer items-center justify-center rounded-lg border text-xs font-medium transition-all"
+          :class="{ '!border-ink !bg-ink !text-bg !font-bold': p === currentPage }"
           :aria-current="p === currentPage ? 'page' : undefined"
           @click="goToPage(Number(p))"
         >
@@ -70,7 +74,7 @@ const pageNumbers = computed(() => {
 
     <button
       type="button"
-      class="pagination-btn pagination-nav"
+      class="border-line bg-card text-muted hover:text-ink hover:border-line-strong cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-medium transition-all disabled:pointer-events-none disabled:opacity-30"
       :disabled="currentPage >= totalPages"
       aria-label="Go to next page"
       @click="goToPage(currentPage + 1)"

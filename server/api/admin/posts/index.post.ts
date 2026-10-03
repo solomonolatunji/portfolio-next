@@ -45,7 +45,11 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check unique slug
-  const [existing] = await db.select({ id: posts.id }).from(posts).where(eq(posts.slug, slug)).limit(1);
+  const [existing] = await db
+    .select({ id: posts.id })
+    .from(posts)
+    .where(eq(posts.slug, slug))
+    .limit(1);
   if (existing) {
     throw createError({ statusCode: 409, statusMessage: "A post with this slug already exists." });
   }
