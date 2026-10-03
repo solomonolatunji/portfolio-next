@@ -8,6 +8,7 @@ const isGuestbook = computed(() => route.path === "/guestbook");
 
 useHead(() => ({
   title: isGuestbook.value ? "Guestbook | Solomon Olatunji" : "Solomon Olatunji | Portfolio",
+  link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
 }));
 
 useSeoMeta({

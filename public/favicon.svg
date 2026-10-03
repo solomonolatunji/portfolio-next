@@ -1,5 +1,19 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="16" fill="#0B0B0B"/>
-  <rect x="1" y="1" width="62" height="62" rx="15" stroke="#2A2A2A"/>
-  <path d="M15.5 47L24.1 17H29.08L37.68 47H33.4L31.5 40.42H17.88L15.88 47H15.5ZM18.92 36.84H28.62L23.78 21.12L18.92 36.84Z" fill="#F5F5F5"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#070707"/>
+    </linearGradient>
+    <linearGradient id="border" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#383838"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <linearGradient id="text" x1="0" y1="16" x2="0" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#D4D4D4"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" stroke="url(#border)" stroke-width="1.5"/>
+  <text x="32" y="34.5" text-anchor="middle" dominant-baseline="central" font-family="'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="800" letter-spacing="-1px" fill="url(#text)">SO</text>
 </svg>
