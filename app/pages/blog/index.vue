@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { formatPageTitle } from "@/constants/site";
 import type { BlogPostSummary, BlogPostsResponse } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import BlogFeaturedHero from "@/components/BlogFeaturedHero.vue";
 import BlogPostCard from "@/components/BlogPostCard.vue";
 import BlogPagination from "@/components/BlogPagination.vue";
+const siteConfig = useSiteConfig();
 
 useHead({
-  title: formatPageTitle("Blog"),
+  title: siteConfig.pageTitle("Blog"),
   meta: [
     {
       name: "description",

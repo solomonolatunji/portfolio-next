@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import BlogEditor from "@/components/BlogEditor.vue";
-import { formatPageTitle } from "@/constants/site";
+const siteConfig = useSiteConfig();
 
 definePageMeta({
   middleware: "admin",
 });
 
 useHead({
-  title: formatPageTitle("New Article | Admin Blog"),
+  title: siteConfig.pageTitle("New Article | Admin Blog"),
 });
 </script>
 

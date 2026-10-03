@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { siteConfig } from "@/constants/site";
 import type { BlogComment } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
+const siteConfig = useSiteConfig();
 
 const props = defineProps<{
   comment: BlogComment;

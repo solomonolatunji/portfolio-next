@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { renderMarkdown } from "../../app/utils/markdown";
-import { formatPageTitle, siteConfig } from "../../app/constants/site";
-import { isAdminUsername, DEFAULT_ADMIN_USERNAME } from "../../server/utils/admin";
+import { renderMarkdown } from "~/utils/markdown";
+import { formatPageTitle } from "~/utils/site";
+import { isAdminUsername, DEFAULT_ADMIN_USERNAME } from "~~/server/utils/admin";
 
 describe("renderMarkdown", () => {
   it("renders headers and bold text", () => {
@@ -35,21 +35,14 @@ describe("renderMarkdown", () => {
   });
 });
 
-describe("siteConfig and formatPageTitle", () => {
+describe("formatPageTitle", () => {
   it("formats page title with site name appended", () => {
-    const title = formatPageTitle("My New Article");
-    expect(title).toBe(`My New Article | ${siteConfig.name}`);
+    expect(formatPageTitle("Acme", "My New Article")).toBe("My New Article | Acme");
   });
 
   it("falls back to site title when no page title is provided", () => {
-    expect(formatPageTitle()).toBe(`${siteConfig.name} | Portfolio`);
-    expect(formatPageTitle("")).toBe(`${siteConfig.name} | Portfolio`);
-  });
-
-  it("has non-empty site configuration defaults", () => {
-    expect(siteConfig.name).toBeTruthy();
-    expect(siteConfig.shortName).toBeTruthy();
-    expect(siteConfig.adminUsername).toBeTruthy();
+    expect(formatPageTitle("Acme")).toBe("Acme | Portfolio");
+    expect(formatPageTitle("Acme", "")).toBe("Acme | Portfolio");
   });
 });
 

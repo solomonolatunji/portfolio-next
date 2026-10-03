@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import BlogEditor from "@/components/BlogEditor.vue";
-import { formatPageTitle } from "@/constants/site";
 import type { BlogPost } from "@/interfaces/blog";
+const siteConfig = useSiteConfig();
 
 definePageMeta({
   middleware: "admin",
@@ -22,8 +22,8 @@ const post = computed(() => data.value?.post || null);
 
 useHead(() => ({
   title: post.value
-    ? formatPageTitle(`Edit "${post.value.title}"`)
-    : formatPageTitle("Edit Article | Admin Blog"),
+    ? siteConfig.pageTitle(`Edit "${post.value.title}"`)
+    : siteConfig.pageTitle("Edit Article | Admin Blog"),
 }));
 </script>
 

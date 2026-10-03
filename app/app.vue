@@ -2,8 +2,8 @@
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import SiteFooter from "@/components/SiteFooter.vue";
 import { profileLinks } from "@/constants/about";
-import { siteConfig, formatPageTitle } from "@/constants/site";
 import type { GuestbookUser } from "@/interfaces/guestbook";
+const siteConfig = useSiteConfig();
 
 const route = useRoute();
 const isHome = computed(() => route.path === "/");
@@ -23,12 +23,12 @@ const currentUser = computed(() => authData.value?.user ?? null);
 
 useHead(() => ({
   title: isGuestbook.value
-    ? formatPageTitle("Guestbook")
+    ? siteConfig.pageTitle("Guestbook")
     : isBlog.value
-    ? formatPageTitle("Blog")
+    ? siteConfig.pageTitle("Blog")
     : isAdmin.value
-    ? formatPageTitle("Admin Blog")
-    : formatPageTitle(),
+    ? siteConfig.pageTitle("Admin Blog")
+    : siteConfig.pageTitle(),
   link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
 }));
 
@@ -42,31 +42,42 @@ useSeoMeta({
 </script>
 
 <template>
-  <main class="portfolio-shell">
-    <nav class="site-nav" aria-label="Primary navigation">
-      <NuxtLink to="/" class="site-mark">{{ siteConfig.shortName }}<span>/</span>26</NuxtLink>
-      <div class="site-nav-links">
-        <NuxtLink to="/" :class="{ active: isHome }">Home</NuxtLink>
-        <span aria-hidden="true">/</span>
-        <NuxtLink to="/blog" :class="{ active: isBlog }">Blog</NuxtLink>
-        <span aria-hidden="true">/</span>
-        <NuxtLink to="/guestbook" :class="{ active: isGuestbook }">Guestbook</NuxtLink>
-        <template v-if="currentUser?.isAdmin">
+  <UApp>
+    <main class="mx-auto flex min-h-dvh w-[min(980px,calc(100%-2rem))] flex-1 flex-col pt-9 pb-11">
+      <nav
+        class="mx-auto flex w-full max-w-190 items-center justify-between gap-2.5 text-[0.7rem] font-bold tracking-[0.16em] text-soft uppercase"
+        aria-label="Primary navigation"
+      >
+        <NuxtLink to="/" class="text-xs tracking-[0.08em] text-ink">
+          {{ siteConfig.shortName }}<span class="mx-0.5 text-soft">/</span>26
+        </NuxtLink>
+        <div class="flex items-center gap-2.5">
+          <NuxtLink to="/" class="transition-colors hover:text-ink" :class="{ 'text-ink': isHome }">Home</NuxtLink>
           <span aria-hidden="true">/</span>
-          <NuxtLink to="/admin/blog" :class="{ active: isAdmin }">Admin</NuxtLink>
-        </template>
-        <a
-          :href="profileLinks[0].href"
-          class="site-github-link"
-          aria-label="Open Solomon's GitHub"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <GitHubIcon />
-        </a>
-      </div>
-    </nav>
-    <NuxtPage />
-    <SiteFooter />
-  </main>
+          <NuxtLink to="/blog" class="transition-colors hover:text-ink" :class="{ 'text-ink': isBlog }">Blog</NuxtLink>
+          <span aria-hidden="true">/</span>
+          <NuxtLink to="/guestbook" class="transition-colors hover:text-ink" :class="{ 'text-ink': isGuestbook }">
+            Guestbook
+          </NuxtLink>
+          <template v-if="currentUser?.isAdmin">
+            <span aria-hidden="true">/</span>
+            <NuxtLink to="/admin/blog" class="transition-colors hover:text-ink" :class="{ 'text-ink': isAdmin }">
+              Admin
+            </NuxtLink>
+          </template>
+          <a
+            :href="profileLinks[0].href"
+            class="ml-1.5 inline-flex size-8 items-center justify-center rounded-full border border-line text-muted hover:border-line-strong hover:text-ink [&_svg]:size-4 [&_svg]:fill-current"
+            aria-label="Open Solomon's GitHub"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <GitHubIcon />
+          </a>
+        </div>
+      </nav>
+      <NuxtPage />
+      <SiteFooter />
+    </main>
+  </UApp>
 </template>

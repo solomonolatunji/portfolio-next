@@ -2,11 +2,11 @@
 import { computed } from "vue";
 import BlogComments from "@/components/BlogComments.vue";
 import BlogReactions from "@/components/BlogReactions.vue";
-import { siteConfig, formatPageTitle } from "@/constants/site";
 import type { BlogPost, BlogComment, BlogReactionsSummary } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 import { renderMarkdown } from "@/utils/markdown";
+const siteConfig = useSiteConfig();
 
 const route = useRoute();
 const slug = computed(() => route.params.slug as string);
@@ -43,7 +43,7 @@ const htmlContent = computed(() => {
 });
 
 useHead(() => ({
-  title: post.value ? formatPageTitle(post.value.title) : formatPageTitle("Article"),
+  title: post.value ? siteConfig.pageTitle(post.value.title) : siteConfig.pageTitle("Article"),
 }));
 
 useSeoMeta({

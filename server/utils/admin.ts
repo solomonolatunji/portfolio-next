@@ -1,9 +1,10 @@
 import type { H3Event } from "h3";
+import { env } from "~~/env";
 
 export const DEFAULT_ADMIN_USERNAME = "solomonolatunji";
 
 export function getAdminUsernames(): string[] {
-  const envVal = process.env.ADMIN_GITHUB_USERNAME;
+  const envVal = env.ADMIN_GITHUB_USERNAME;
   if (!envVal) return [DEFAULT_ADMIN_USERNAME.toLowerCase()];
   return envVal
     .split(",")

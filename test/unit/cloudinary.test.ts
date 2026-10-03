@@ -1,22 +1,19 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mockEnv = vi.hoisted(() => ({}) as Record<string, string | undefined>);
+
+vi.mock("~~/env", () => ({ env: mockEnv }));
+
 import {
-  configureCloudinary,
   isCloudinaryConfigured,
   uploadSignatureToCloudinary,
-} from "../../server/utils/cloudinary";
+} from "~~/server/utils/cloudinary";
 
 describe("Cloudinary utility", () => {
-  const originalEnv = { ...process.env };
-
   beforeEach(() => {
-    delete process.env.CLOUDINARY_URL;
-    delete process.env.CLOUDINARY_CLOUD_NAME;
-    delete process.env.CLOUDINARY_API_KEY;
-    delete process.env.CLOUDINARY_API_SECRET;
-  });
-
-  afterEach(() => {
-    process.env = { ...originalEnv };
+    for (const key of Object.keys(mockEnv)) {
+      delete mockEnv[key];
+    }
   });
 
   it("detects when Cloudinary is not configured", () => {
@@ -24,19 +21,19 @@ describe("Cloudinary utility", () => {
   });
 
   it("detects configuration via CLOUDINARY_URL", () => {
-    process.env.CLOUDINARY_URL = "cloudinary://123456:secret@mycloud";
+    mockEnv.CLOUDINARY_URL = "cloudinary://123456:secret@mycloud";
     expect(isCloudinaryConfigured()).toBe(true);
   });
 
   it("detects configuration via individual environment variables", () => {
-    process.env.CLOUDINARY_CLOUD_NAME = "mycloud";
-    process.env.CLOUDINARY_API_KEY = "123456";
-    process.env.CLOUDINARY_API_SECRET = "secret";
+    mockEnv.CLOUDINARY_CLOUD_NAME = "mycloud";
+    mockEnv.CLOUDINARY_API_KEY = "123456";
+    mockEnv.CLOUDINARY_API_SECRET = "secret";
     expect(isCloudinaryConfigured()).toBe(true);
   });
 
   it("rejects incomplete individual variables", () => {
-    process.env.CLOUDINARY_CLOUD_NAME = "mycloud";
+    mockEnv.CLOUDINARY_CLOUD_NAME = "mycloud";
     expect(isCloudinaryConfigured()).toBe(false);
   });
 
