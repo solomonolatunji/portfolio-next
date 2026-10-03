@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { formatPageTitle } from "@/constants/site";
 import type { BlogPostSummary } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 
 useHead({
-  title: "Blog | Solomon Olatunji",
+  title: formatPageTitle("Blog"),
   meta: [
     {
       name: "description",
-      content: "Articles and thoughts on software engineering, architecture, and technology.",
+      content: "Articles, insights, and thoughts on technology, engineering, and product development.",
     },
   ],
 });

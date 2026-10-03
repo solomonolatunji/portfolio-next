@@ -1,8 +1,8 @@
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "#server/db";
-import { postComments, postReactions, posts, users } from "#server/db/schema";
+import { commentReactions, postComments, postReactions, posts, users } from "#server/db/schema";
 import { isAdminUsername } from "#server/utils/admin";
-import { getGuestbookSession } from "#server/utils/guestbook";
+import { getVisitorOrUser } from "#server/utils/visitor";
 
 export default defineEventHandler(async (event) => {
   const db = getDb();
@@ -13,20 +13,17 @@ export default defineEventHandler(async (event) => {
   }
 
   const [post] = await db.select().from(posts).where(eq(posts.slug, slug)).limit(1);
-
   if (!post) {
     throw createError({ statusCode: 404, statusMessage: "Blog post not found." });
   }
 
-  const currentUser = await getGuestbookSession(event);
-  const isUserAdmin = currentUser ? isAdminUsername(currentUser.username) : false;
+  const actor = await getVisitorOrUser(event);
+  const isUserAdmin = actor.user ? isAdminUsername(actor.user.username) : false;
 
-  // If draft and not admin, return 404
   if (!post.published && !isUserAdmin) {
     throw createError({ statusCode: 404, statusMessage: "Blog post not found." });
   }
 
-  // Atomically increment views (only if published, and avoid inflating on admin preview)
   if (post.published) {
     await db
       .update(posts)
@@ -41,6 +38,8 @@ export default defineEventHandler(async (event) => {
       id: postComments.id,
       postId: postComments.postId,
       userId: postComments.userId,
+      guestName: postComments.guestName,
+      guestEmail: postComments.guestEmail,
       parentId: postComments.parentId,
       content: postComments.content,
       createdAt: postComments.createdAt,
@@ -49,11 +48,32 @@ export default defineEventHandler(async (event) => {
       profileUrl: users.profileUrl,
     })
     .from(postComments)
-    .innerJoin(users, eq(users.id, postComments.userId))
+    .leftJoin(users, eq(users.id, postComments.userId))
     .where(eq(postComments.postId, post.id))
     .orderBy(asc(postComments.createdAt));
 
-  // Build comment tree
+  const commentIds = rawComments.map((c) => c.id);
+  const commentReactionsList =
+    commentIds.length > 0
+      ? await db
+          .select({
+            commentId: commentReactions.commentId,
+            userId: commentReactions.userId,
+          })
+          .from(commentReactions)
+          .where(inArray(commentReactions.commentId, commentIds))
+      : [];
+
+  const commentReactionsMap = new Map<number, { count: number; userReacted: boolean }>();
+  for (const cr of commentReactionsList) {
+    const cur = commentReactionsMap.get(cr.commentId) || { count: 0, userReacted: false };
+    cur.count += 1;
+    if (cr.userId === actor.id) {
+      cur.userReacted = true;
+    }
+    commentReactionsMap.set(cr.commentId, cur);
+  }
+
   type CommentNode = {
     id: number;
     postId: number;
@@ -66,7 +86,10 @@ export default defineEventHandler(async (event) => {
       username: string;
       avatarUrl: string | null;
       profileUrl: string;
+      isGuest?: boolean;
     };
+    reactionCount: number;
+    userReacted: boolean;
     replies: CommentNode[];
   };
 
@@ -74,6 +97,13 @@ export default defineEventHandler(async (event) => {
   const rootComments: CommentNode[] = [];
 
   for (const c of rawComments) {
+    const isGuest = !c.username;
+    const authorName = c.username || c.guestName || "Guest";
+    const authorAvatar =
+      c.avatarUrl ||
+      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(authorName)}`;
+    const crInfo = commentReactionsMap.get(c.id) || { count: 0, userReacted: false };
+
     const node: CommentNode = {
       id: c.id,
       postId: c.postId,
@@ -83,10 +113,13 @@ export default defineEventHandler(async (event) => {
       createdAt: c.createdAt instanceof Date ? c.createdAt.toISOString() : String(c.createdAt),
       author: {
         id: c.userId,
-        username: c.username,
-        avatarUrl: c.avatarUrl,
-        profileUrl: c.profileUrl,
+        username: authorName,
+        avatarUrl: authorAvatar,
+        profileUrl: c.profileUrl || "",
+        isGuest,
       },
+      reactionCount: crInfo.count,
+      userReacted: crInfo.userReacted,
       replies: [],
     };
     commentMap.set(c.id, node);
@@ -102,7 +135,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // 2. Fetch Reactions
+  // 2. Fetch Post Reactions
   const reactions = await db
     .select({
       reactionType: postReactions.reactionType,
@@ -111,7 +144,6 @@ export default defineEventHandler(async (event) => {
     .from(postReactions)
     .where(eq(postReactions.postId, post.id));
 
-  const validTypes = ["heart", "fire", "rocket", "like", "bulb"] as const;
   const counts: Record<string, number> = {
     heart: 0,
     fire: 0,
@@ -119,7 +151,6 @@ export default defineEventHandler(async (event) => {
     like: 0,
     bulb: 0,
   };
-
   const userReactions: string[] = [];
 
   for (const r of reactions) {
@@ -127,7 +158,7 @@ export default defineEventHandler(async (event) => {
     if (typeof cur === "number") {
       counts[r.reactionType] = cur + 1;
     }
-    if (currentUser && r.userId === currentUser.id) {
+    if (r.userId === actor.id) {
       userReactions.push(r.reactionType);
     }
   }
@@ -136,6 +167,7 @@ export default defineEventHandler(async (event) => {
     post: {
       ...post,
       published: Boolean(post.published),
+      allowComments: Boolean(post.allowComments),
       createdAt: post.createdAt instanceof Date ? post.createdAt.toISOString() : String(post.createdAt),
       updatedAt: post.updatedAt instanceof Date ? post.updatedAt.toISOString() : String(post.updatedAt),
     },

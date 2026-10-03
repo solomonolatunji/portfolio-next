@@ -40,6 +40,7 @@ export const posts = mysqlTable(
     content: text("content").notNull(),
     featuredImageUrl: varchar("featured_image_url", { length: 2048 }),
     published: boolean("published").notNull().default(false),
+    allowComments: boolean("allow_comments").notNull().default(true),
     readTimeMinutes: int("read_time_minutes").notNull().default(3),
     views: int("views").notNull().default(0),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -58,6 +59,8 @@ export const postComments = mysqlTable(
     id: int("id").autoincrement().primaryKey(),
     postId: int("post_id").notNull(),
     userId: varchar("user_id", { length: 64 }).notNull(),
+    guestName: varchar("guest_name", { length: 128 }),
+    guestEmail: varchar("guest_email", { length: 255 }),
     parentId: int("parent_id"),
     content: varchar("content", { length: 1000 }).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -81,5 +84,20 @@ export const postReactions = mysqlTable(
   (table) => [
     uniqueIndex("idx_post_reactions_unique").on(table.postId, table.userId, table.reactionType),
     index("idx_post_reactions_post_id").on(table.postId),
+  ]
+);
+
+export const commentReactions = mysqlTable(
+  "comment_reactions",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    commentId: int("comment_id").notNull(),
+    userId: varchar("user_id", { length: 64 }).notNull(),
+    reactionType: varchar("reaction_type", { length: 32 }).notNull().default("heart"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("idx_comment_reactions_unique").on(table.commentId, table.userId, table.reactionType),
+    index("idx_comment_reactions_comment_id").on(table.commentId),
   ]
 );

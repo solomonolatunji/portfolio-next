@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { formatPageTitle } from "@/constants/site";
 import type { BlogPostSummary } from "@/interfaces/blog";
 import { formatDate } from "@/utils/date";
 
@@ -8,7 +9,7 @@ definePageMeta({
 });
 
 useHead({
-  title: "Admin Blog Management | Solomon Olatunji",
+  title: formatPageTitle("Admin Blog Management"),
 });
 
 const { data, status, refresh } = await useAsyncData(

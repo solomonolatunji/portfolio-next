@@ -13,6 +13,7 @@ export default defineEventHandler(async () => {
       description: posts.description,
       featuredImageUrl: posts.featuredImageUrl,
       published: posts.published,
+      allowComments: posts.allowComments,
       readTimeMinutes: posts.readTimeMinutes,
       views: posts.views,
       createdAt: posts.createdAt,
@@ -37,6 +38,7 @@ export default defineEventHandler(async () => {
       return {
         ...p,
         published: Boolean(p.published),
+        allowComments: Boolean(p.allowComments),
         commentCount: Number(commentCountResult?.count || 0),
         reactionCount: Number(reactionCountResult?.count || 0),
         createdAt: p.createdAt instanceof Date ? p.createdAt.toISOString() : String(p.createdAt),

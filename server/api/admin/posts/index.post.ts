@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
     content?: string;
     featuredImageUrl?: string;
     published?: boolean;
+    allowComments?: boolean;
   }>(event);
 
   const title = body?.title?.trim();
@@ -52,6 +53,7 @@ export default defineEventHandler(async (event) => {
   const content = body?.content || "";
   const featuredImageUrl = body?.featuredImageUrl?.trim() || null;
   const published = Boolean(body?.published);
+  const allowComments = body?.allowComments !== undefined ? Boolean(body.allowComments) : true;
   const readTimeMinutes = calculateReadTime(content);
 
   const [result] = await db.insert(posts).values({
@@ -61,6 +63,7 @@ export default defineEventHandler(async (event) => {
     content,
     featuredImageUrl,
     published,
+    allowComments,
     readTimeMinutes,
     views: 0,
   });

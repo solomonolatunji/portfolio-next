@@ -1592,21 +1592,34 @@ a {
    BLOG COMMENTS COMPONENT
    ========================================================================== */
 
-.blog-comments-container {
-  margin-top: 3rem;
+.blog-comments-section {
+  margin-top: 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.comments-heading {
+.blog-comments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.blog-comments-header h3 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text);
 }
 
-.comment-composer {
+.blog-comments-count {
+  font-size: 0.8rem;
+  color: var(--soft);
+}
+
+.blog-comment-composer {
   padding: 1.25rem;
   background: var(--bg-card);
   border: 1px solid var(--line);
@@ -1616,7 +1629,7 @@ a {
   gap: 0.85rem;
 }
 
-.composer-user-info {
+.composer-user-meta {
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -1632,69 +1645,121 @@ a {
   border: 1px solid var(--line);
 }
 
+.composer-guest-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.guest-field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.guest-input-sm {
+  padding: 0.45rem 0.75rem !important;
+  font-size: 0.84rem !important;
+}
+
+.guest-github-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--soft);
+}
+
+.github-mini-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 600;
+  transition: all 150ms ease;
+}
+
+.github-mini-link:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--line-strong);
+}
+
 .composer-actions {
   display: flex;
   justify-content: flex-end;
+  margin-top: 0.5rem;
 }
 
-.comment-login-cta {
-  padding: 1.25rem;
-  background: var(--bg-card);
-  border: 1px dashed var(--line);
-  border-radius: 12px;
-  text-align: center;
+.blog-comments-thread {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.85rem;
-  color: var(--muted);
-  font-size: 0.88rem;
+  gap: 1.25rem;
 }
 
-.comments-tree {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-.comment-node {
+.blog-comment-node {
   background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 1.1rem;
+  padding: 1.2rem;
 }
 
-.comment-header {
+.comment-author-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.65rem;
   margin-bottom: 0.65rem;
 }
 
-.comment-author {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
 .comment-avatar {
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 9999px;
   object-fit: cover;
   border: 1px solid var(--line);
 }
 
-.comment-username {
-  font-weight: 600;
+.comment-avatar.small {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.comment-author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.author-name-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.author-name-link {
+  font-weight: 700;
   font-size: 0.88rem;
   color: var(--text);
 }
 
-.comment-badge-admin {
+.author-name-link:hover {
+  text-decoration: underline;
+}
+
+.author-name-static {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.author-badge {
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1703,7 +1768,7 @@ a {
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-.comment-time {
+.comment-author-info time {
   font-size: 0.72rem;
   color: var(--soft);
 }
@@ -1712,15 +1777,51 @@ a {
   font-size: 0.92rem;
   line-height: 1.6;
   color: #e5e7eb;
+  margin: 0.4rem 0 0.8rem;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-.comment-reply-btn {
-  margin-top: 0.65rem;
+.comment-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.comment-reaction-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.comment-reaction-btn:hover {
+  background: var(--line);
+  color: var(--text);
+}
+
+.comment-reaction-btn.active {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.comment-reaction-count {
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.reply-trigger-btn {
   background: transparent;
   border: none;
-  padding: 0;
+  padding: 0.25rem 0.5rem;
   color: var(--soft);
   font-size: 0.78rem;
   font-weight: 600;
@@ -1728,13 +1829,13 @@ a {
   transition: color 150ms ease;
 }
 
-.comment-reply-btn:hover {
+.reply-trigger-btn:hover {
   color: var(--text);
 }
 
-.comment-reply-composer {
-  margin-top: 0.85rem;
-  padding: 0.85rem;
+.inline-reply-composer {
+  margin-top: 1rem;
+  padding: 1rem;
   background: var(--bg-elevated);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1743,7 +1844,27 @@ a {
   gap: 0.65rem;
 }
 
-.comment-replies {
+.inline-reply-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  color: var(--text);
+}
+
+.nested-replies-list {
   margin-top: 1rem;
   margin-left: 1.5rem;
   padding-left: 1rem;
@@ -1751,6 +1872,29 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+}
+
+.nested-reply-node {
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.85rem;
+}
+
+.blog-comments-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--soft);
+  background: var(--bg-card);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.editor-toggles-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
 /* ==========================================================================

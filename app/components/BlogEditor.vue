@@ -22,6 +22,7 @@ const description = ref(props.post?.description || "");
 const content = ref(props.post?.content || "");
 const featuredImageUrl = ref(props.post?.featuredImageUrl || "");
 const published = ref(props.post ? Boolean(props.post.published) : false);
+const allowComments = ref(props.post ? Boolean(props.post.allowComments) : true);
 
 // Editor state
 const activeTab = ref<"write" | "preview" | "split">("write");
@@ -189,6 +190,7 @@ async function savePost(publishState?: boolean) {
     content: content.value,
     featuredImageUrl: featuredImageUrl.value.trim() || null,
     published: published.value,
+    allowComments: allowComments.value,
   };
 
   try {
@@ -505,16 +507,27 @@ async function savePost(publishState?: boolean) {
         </div>
       </div>
 
-      <!-- Published Toggle & Bottom Save -->
+      <!-- Published & Comments Toggles & Bottom Save -->
       <div class="editor-bottom-bar">
-        <label class="publish-checkbox-label">
-          <input
-            v-model="published"
-            type="checkbox"
-            class="publish-checkbox"
-          />
-          <span>Publish immediately (visible to the public)</span>
-        </label>
+        <div class="editor-toggles-group">
+          <label class="publish-checkbox-label">
+            <input
+              v-model="published"
+              type="checkbox"
+              class="publish-checkbox"
+            />
+            <span>Publish immediately (visible to the public)</span>
+          </label>
+
+          <label class="publish-checkbox-label">
+            <input
+              v-model="allowComments"
+              type="checkbox"
+              class="publish-checkbox"
+            />
+            <span>Allow comments & replies on this article</span>
+          </label>
+        </div>
 
         <div class="bottom-actions">
           <NuxtLink to="/admin/blog" class="guestbook-button secondary">

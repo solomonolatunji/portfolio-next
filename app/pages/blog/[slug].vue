@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import BlogComments from "@/components/BlogComments.vue";
 import BlogReactions from "@/components/BlogReactions.vue";
+import { siteConfig, formatPageTitle } from "@/constants/site";
 import type { BlogPost, BlogComment, BlogReactionsSummary } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
@@ -42,7 +43,7 @@ const htmlContent = computed(() => {
 });
 
 useHead(() => ({
-  title: post.value ? `${post.value.title} | Solomon Olatunji` : "Article | Solomon Olatunji",
+  title: post.value ? formatPageTitle(post.value.title) : formatPageTitle("Article"),
 }));
 
 useSeoMeta({
@@ -58,15 +59,8 @@ useSeoMeta({
 <template>
   <div class="blog-detail-page">
     <div class="blog-back-bar">
-      <NuxtLink to="/blog" class="guestbook-back-link">
-        ← Back to writing
-      </NuxtLink>
-      <NuxtLink
-        v-if="currentUser?.isAdmin && post"
-        :to="`/admin/blog/${post.id}`"
-        class="admin-edit-pill"
-      >
-        ✏️ Edit post
+      <NuxtLink to="/blog" class="back-link">
+        ← All Articles
       </NuxtLink>
     </div>
 
@@ -75,7 +69,7 @@ useSeoMeta({
     </div>
 
     <div v-else-if="error || !post" class="guestbook-empty">
-      <p>Article not found or has been unpublished.</p>
+      <p>Article not found.</p>
       <NuxtLink to="/blog" class="guestbook-button mt-4 inline-flex">
         Return to Blog
       </NuxtLink>
@@ -98,13 +92,13 @@ useSeoMeta({
 
         <div class="blog-author-strip">
           <img
-            src="https://github.com/solomonolatunji.png"
-            alt="Solomon Olatunji"
+            :src="`https://github.com/${siteConfig.adminUsername}.png`"
+            :alt="siteConfig.name"
             class="author-avatar"
           />
           <div>
-            <strong>Solomon Olatunji</strong>
-            <span class="author-handle">@solomonolatunji</span>
+            <strong>{{ siteConfig.name }}</strong>
+            <span class="author-handle">@{{ siteConfig.adminUsername }}</span>
           </div>
         </div>
       </header>
@@ -121,7 +115,7 @@ useSeoMeta({
       <!-- Markdown Content Body -->
       <div class="blog-prose-content" v-html="htmlContent" />
 
-      <!-- Reaction Bar -->
+      <!-- Reaction Bar (Available for all posts) -->
       <div class="blog-article-reactions">
         <BlogReactions
           :post-id="post.id"
@@ -130,8 +124,9 @@ useSeoMeta({
         />
       </div>
 
-      <!-- Comments & Discussion -->
+      <!-- Comments & Discussion (Only if enabled for this post) -->
       <BlogComments
+        v-if="post.allowComments"
         :post-id="post.id"
         :initial-comments="comments"
         :current-user="currentUser"

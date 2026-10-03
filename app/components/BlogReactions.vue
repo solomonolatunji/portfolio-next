@@ -26,10 +26,6 @@ const reactionButtons: { type: BlogReactionType; emoji: string; label: string }[
 ];
 
 async function toggleReaction(type: BlogReactionType) {
-  if (!props.currentUser) {
-    window.location.href = "/api/auth/github";
-    return;
-  }
   if (toggling.value) return;
   toggling.value = true;
 

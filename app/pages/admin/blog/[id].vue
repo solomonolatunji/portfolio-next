@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import BlogEditor from "@/components/BlogEditor.vue";
+import { formatPageTitle } from "@/constants/site";
 import type { BlogPost } from "@/interfaces/blog";
 
 definePageMeta({
@@ -21,8 +22,8 @@ const post = computed(() => data.value?.post || null);
 
 useHead(() => ({
   title: post.value
-    ? `Edit "${post.value.title}" | Admin Blog`
-    : "Edit Article | Admin Blog",
+    ? formatPageTitle(`Edit "${post.value.title}"`)
+    : formatPageTitle("Edit Article | Admin Blog"),
 }));
 </script>
 

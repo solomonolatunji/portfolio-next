@@ -2,6 +2,7 @@
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import SiteFooter from "@/components/SiteFooter.vue";
 import { profileLinks } from "@/constants/about";
+import { siteConfig, formatPageTitle } from "@/constants/site";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 
 const route = useRoute();
@@ -22,19 +23,19 @@ const currentUser = computed(() => authData.value?.user ?? null);
 
 useHead(() => ({
   title: isGuestbook.value
-    ? "Guestbook | Solomon Olatunji"
+    ? formatPageTitle("Guestbook")
     : isBlog.value
-    ? "Blog | Solomon Olatunji"
+    ? formatPageTitle("Blog")
     : isAdmin.value
-    ? "Admin Blog | Solomon Olatunji"
-    : "Solomon Olatunji | Portfolio",
+    ? formatPageTitle("Admin Blog")
+    : formatPageTitle(),
   link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
 }));
 
 useSeoMeta({
-  description: "Solomon Olatunji — software engineer building useful products.",
-  ogDescription: "Solomon Olatunji — software engineer building useful products.",
-  ogSiteName: "Solomon Olatunji",
+  description: siteConfig.description,
+  ogDescription: siteConfig.description,
+  ogSiteName: siteConfig.name,
   ogType: "website",
   twitterCard: "summary",
 });
@@ -43,7 +44,7 @@ useSeoMeta({
 <template>
   <main class="portfolio-shell">
     <nav class="site-nav" aria-label="Primary navigation">
-      <NuxtLink to="/" class="site-mark">SO<span>/</span>26</NuxtLink>
+      <NuxtLink to="/" class="site-mark">{{ siteConfig.shortName }}<span>/</span>26</NuxtLink>
       <div class="site-nav-links">
         <NuxtLink to="/" :class="{ active: isHome }">Home</NuxtLink>
         <span aria-hidden="true">/</span>

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { renderMarkdown } from "../../app/utils/markdown";
+import { formatPageTitle, siteConfig } from "../../app/constants/site";
 import { isAdminUsername, DEFAULT_ADMIN_USERNAME } from "../../server/utils/admin";
 
 describe("renderMarkdown", () => {
@@ -31,6 +32,24 @@ describe("renderMarkdown", () => {
     expect(renderMarkdown("")).toBe("");
     expect(renderMarkdown(null as any)).toBe("");
     expect(renderMarkdown(undefined as any)).toBe("");
+  });
+});
+
+describe("siteConfig and formatPageTitle", () => {
+  it("formats page title with site name appended", () => {
+    const title = formatPageTitle("My New Article");
+    expect(title).toBe(`My New Article | ${siteConfig.name}`);
+  });
+
+  it("falls back to site title when no page title is provided", () => {
+    expect(formatPageTitle()).toBe(`${siteConfig.name} | Portfolio`);
+    expect(formatPageTitle("")).toBe(`${siteConfig.name} | Portfolio`);
+  });
+
+  it("has non-empty site configuration defaults", () => {
+    expect(siteConfig.name).toBeTruthy();
+    expect(siteConfig.shortName).toBeTruthy();
+    expect(siteConfig.adminUsername).toBeTruthy();
   });
 });
 

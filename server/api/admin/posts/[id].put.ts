@@ -62,6 +62,7 @@ export default defineEventHandler(async (event) => {
   const featuredImageUrl =
     body?.featuredImageUrl !== undefined ? body.featuredImageUrl.trim() || null : existing.featuredImageUrl;
   const published = body?.published !== undefined ? Boolean(body.published) : existing.published;
+  const allowComments = body?.allowComments !== undefined ? Boolean(body.allowComments) : Boolean(existing.allowComments);
   const readTimeMinutes = calculateReadTime(content);
 
   await db
@@ -73,6 +74,7 @@ export default defineEventHandler(async (event) => {
       content,
       featuredImageUrl,
       published,
+      allowComments,
       readTimeMinutes,
     })
     .where(eq(posts.id, id));

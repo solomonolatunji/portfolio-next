@@ -1,19 +1,13 @@
-import { readBody } from "h3";
 import { and, eq } from "drizzle-orm";
+import { getRouterParam, readBody } from "h3";
 import { getDb } from "#server/db";
 import { postReactions, posts } from "#server/db/schema";
-import { getGuestbookSession } from "#server/utils/guestbook";
+import { getVisitorOrUser } from "#server/utils/visitor";
 
 const VALID_REACTION_TYPES = new Set(["heart", "fire", "rocket", "like", "bulb"]);
 
 export default defineEventHandler(async (event) => {
-  const user = await getGuestbookSession(event);
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Please sign in with GitHub to react to posts.",
-    });
-  }
+  const actor = await getVisitorOrUser(event);
 
   const idParam = getRouterParam(event, "id");
   const postId = Number(idParam);
@@ -37,14 +31,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Check if reaction already exists
   const [existing] = await db
     .select({ id: postReactions.id })
     .from(postReactions)
     .where(
       and(
         eq(postReactions.postId, postId),
-        eq(postReactions.userId, user.id),
+        eq(postReactions.userId, actor.id),
         eq(postReactions.reactionType, reactionType)
       )
     )
@@ -52,20 +45,17 @@ export default defineEventHandler(async (event) => {
 
   let userReacted = false;
   if (existing) {
-    // Toggle off (remove)
     await db.delete(postReactions).where(eq(postReactions.id, existing.id));
     userReacted = false;
   } else {
-    // Toggle on (add)
     await db.insert(postReactions).values({
       postId,
-      userId: user.id,
+      userId: actor.id,
       reactionType,
     });
     userReacted = true;
   }
 
-  // Recalculate summary
   const allReactions = await db
     .select({
       reactionType: postReactions.reactionType,
@@ -88,7 +78,7 @@ export default defineEventHandler(async (event) => {
     if (typeof cur === "number") {
       counts[r.reactionType] = cur + 1;
     }
-    if (r.userId === user.id) {
+    if (r.userId === actor.id) {
       userReactions.push(r.reactionType);
     }
   }
@@ -100,6 +90,5 @@ export default defineEventHandler(async (event) => {
       userReactions,
       total: allReactions.length,
     },
-    ok: true,
   };
 });

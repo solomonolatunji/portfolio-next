@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
+import { siteConfig } from "@/constants/site";
 import type { BlogComment } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
@@ -13,14 +14,44 @@ const props = defineProps<{
 
 const comments = ref<BlogComment[]>([...props.initialComments]);
 const newCommentContent = ref("");
+const guestName = ref("");
+const guestEmail = ref("");
 const submitting = ref(false);
 const replyingToId = ref<number | null>(null);
 const replyContent = ref("");
+const replyGuestName = ref("");
+const replyGuestEmail = ref("");
 const error = ref("");
+
+onMounted(() => {
+  const savedName = localStorage.getItem("blog_guest_name");
+  const savedEmail = localStorage.getItem("blog_guest_email");
+  if (savedName) {
+    guestName.value = savedName;
+    replyGuestName.value = savedName;
+  }
+  if (savedEmail) {
+    guestEmail.value = savedEmail;
+    replyGuestEmail.value = savedEmail;
+  }
+});
+
+function saveGuestInfo(name: string, email: string) {
+  if (name) localStorage.setItem("blog_guest_name", name);
+  if (email) localStorage.setItem("blog_guest_email", email);
+}
 
 async function submitComment(parentId: number | null = null) {
   const content = parentId ? replyContent.value.trim() : newCommentContent.value.trim();
+  const name = parentId ? replyGuestName.value.trim() : guestName.value.trim();
+  const email = parentId ? replyGuestEmail.value.trim() : guestEmail.value.trim();
+
   if (!content || submitting.value) return;
+
+  if (!props.currentUser && !name) {
+    error.value = "Please enter your name to post a comment.";
+    return;
+  }
 
   submitting.value = true;
   error.value = "";
@@ -28,11 +59,19 @@ async function submitComment(parentId: number | null = null) {
   try {
     const created = await $fetch<BlogComment>(`/api/posts/${props.postId}/comments` as string, {
       method: "POST",
-      body: { content, parentId },
+      body: {
+        content,
+        parentId,
+        guestName: !props.currentUser ? name : undefined,
+        guestEmail: !props.currentUser ? email : undefined,
+      },
     });
 
+    if (!props.currentUser && name) {
+      saveGuestInfo(name, email);
+    }
+
     if (parentId) {
-      // Find parent in tree and push to replies
       const addReply = (list: BlogComment[]): boolean => {
         for (const item of list) {
           if (item.id === parentId) {
@@ -59,6 +98,27 @@ async function submitComment(parentId: number | null = null) {
   }
 }
 
+async function toggleCommentReaction(comment: BlogComment) {
+  const previousReacted = comment.userReacted;
+  const previousCount = comment.reactionCount;
+
+  comment.userReacted = !previousReacted;
+  comment.reactionCount = previousReacted ? Math.max(0, previousCount - 1) : previousCount + 1;
+
+  try {
+    const res = await $fetch<{ reacted: boolean; reactionCount: number }>(
+      `/api/comments/${comment.id}/reactions` as string,
+      { method: "POST" }
+    );
+    comment.userReacted = res.reacted;
+    comment.reactionCount = res.reactionCount;
+  } catch (err) {
+    comment.userReacted = previousReacted;
+    comment.reactionCount = previousCount;
+    console.error("Failed to toggle reaction on comment:", err);
+  }
+}
+
 function toggleReply(id: number) {
   if (replyingToId.value === id) {
     replyingToId.value = null;
@@ -66,6 +126,12 @@ function toggleReply(id: number) {
   } else {
     replyingToId.value = id;
     replyContent.value = "";
+    if (guestName.value) {
+      replyGuestName.value = guestName.value;
+    }
+    if (guestEmail.value) {
+      replyGuestEmail.value = guestEmail.value;
+    }
   }
 }
 </script>
@@ -73,13 +139,14 @@ function toggleReply(id: number) {
 <template>
   <section class="blog-comments-section">
     <div class="blog-comments-header">
-      <h3>Comments & Discussion</h3>
+      <h3>Discussion</h3>
       <span class="blog-comments-count">{{ comments.length }} {{ comments.length === 1 ? 'comment' : 'comments' }}</span>
     </div>
 
     <!-- Main Comment Composer -->
-    <div v-if="currentUser" class="blog-comment-composer">
-      <div class="composer-user-meta">
+    <div class="blog-comment-composer">
+      <!-- User info header if logged in -->
+      <div v-if="currentUser" class="composer-user-meta">
         <img
           v-if="currentUser.avatarUrl"
           :src="currentUser.avatarUrl"
@@ -88,38 +155,57 @@ function toggleReply(id: number) {
         />
         <span>Commenting as <strong>{{ currentUser.username }}</strong></span>
       </div>
+
+      <!-- Guest name inputs if not logged in -->
+      <div v-else class="composer-guest-row">
+        <div class="guest-field">
+          <input
+            v-model="guestName"
+            type="text"
+            placeholder="Your name *"
+            required
+            class="guestbook-input guest-input-sm"
+          />
+        </div>
+        <div class="guest-field">
+          <input
+            v-model="guestEmail"
+            type="email"
+            placeholder="Email (optional, for avatar)"
+            class="guestbook-input guest-input-sm"
+          />
+        </div>
+        <div class="guest-github-hint">
+          <span>or</span>
+          <a href="/api/auth/github" class="github-mini-link" rel="external">
+            <GitHubIcon />
+            Sign in
+          </a>
+        </div>
+      </div>
+
       <form @submit.prevent="submitComment(null)">
-        <UTextarea
+        <textarea
           v-model="newCommentContent"
           placeholder="Share your thoughts or feedback..."
-          :rows="3"
-          :maxlength="1000"
+          rows="3"
+          maxlength="1000"
           :disabled="submitting"
-          class="w-full"
-        />
+          class="guestbook-textarea w-full"
+        ></textarea>
         <div class="composer-actions">
-          <UButton
+          <button
             type="submit"
-            size="sm"
-            :loading="submitting"
-            :disabled="!newCommentContent.trim()"
+            class="guestbook-button"
+            :disabled="submitting || !newCommentContent.trim() || (!currentUser && !guestName.trim())"
           >
-            Post Comment
-          </UButton>
+            {{ submitting ? 'Posting...' : 'Post Comment' }}
+          </button>
         </div>
       </form>
     </div>
 
-    <!-- Login CTA for Visitors -->
-    <div v-else class="blog-comments-login-card">
-      <p>Have thoughts to share or questions about this post?</p>
-      <a href="/api/auth/github" class="guestbook-button" rel="external">
-        <GitHubIcon />
-        Sign in with GitHub to Comment
-      </a>
-    </div>
-
-    <p v-if="error" class="guestbook-error" role="alert">{{ error }}</p>
+    <p v-if="error" class="guestbook-alert error" role="alert">{{ error }}</p>
 
     <!-- Comments List -->
     <div v-if="comments.length > 0" class="blog-comments-thread">
@@ -133,16 +219,46 @@ function toggleReply(id: number) {
             loading="lazy"
           />
           <div class="comment-author-info">
-            <a :href="comment.author.profileUrl" target="_blank" rel="noreferrer">
-              {{ comment.author.username }}
-            </a>
+            <div class="author-name-group">
+              <a
+                v-if="comment.author.profileUrl"
+                :href="comment.author.profileUrl"
+                target="_blank"
+                rel="noreferrer"
+                class="author-name-link"
+              >
+                {{ comment.author.username }}
+              </a>
+              <span v-else class="author-name-static">{{ comment.author.username }}</span>
+
+              <span
+                v-if="comment.author.username === siteConfig.adminUsername"
+                class="author-badge"
+              >
+                Author
+              </span>
+            </div>
             <time>{{ formatDate(comment.createdAt) }}</time>
           </div>
         </div>
 
         <p class="comment-body">{{ comment.content }}</p>
 
-        <div v-if="currentUser" class="comment-actions">
+        <!-- Actions: Reaction & Reply -->
+        <div class="comment-actions-bar">
+          <button
+            type="button"
+            class="comment-reaction-btn"
+            :class="{ active: comment.userReacted }"
+            title="Like this comment"
+            @click="toggleCommentReaction(comment)"
+          >
+            <span>{{ comment.userReacted ? '❤️' : '🤍' }}</span>
+            <span v-if="comment.reactionCount > 0" class="comment-reaction-count">
+              {{ comment.reactionCount }}
+            </span>
+          </button>
+
           <button
             type="button"
             class="reply-trigger-btn"
@@ -153,16 +269,32 @@ function toggleReply(id: number) {
         </div>
 
         <!-- Inline Reply Composer -->
-        <div v-if="replyingToId === comment.id && currentUser" class="inline-reply-composer">
-          <UTextarea
+        <div v-if="replyingToId === comment.id" class="inline-reply-composer">
+          <div v-if="!currentUser" class="composer-guest-row mb-2">
+            <input
+              v-model="replyGuestName"
+              type="text"
+              placeholder="Your name *"
+              required
+              class="guestbook-input guest-input-sm"
+            />
+            <input
+              v-model="replyGuestEmail"
+              type="email"
+              placeholder="Email (optional)"
+              class="guestbook-input guest-input-sm"
+            />
+          </div>
+
+          <textarea
             v-model="replyContent"
             placeholder="Write a reply..."
-            :rows="2"
-            :maxlength="1000"
+            rows="2"
+            maxlength="1000"
             :disabled="submitting"
-            class="w-full"
+            class="guestbook-textarea w-full"
             autofocus
-          />
+          ></textarea>
           <div class="inline-reply-actions">
             <button
               type="button"
@@ -172,14 +304,14 @@ function toggleReply(id: number) {
             >
               Cancel
             </button>
-            <UButton
-              size="xs"
-              :loading="submitting"
-              :disabled="!replyContent.trim()"
+            <button
+              type="button"
+              class="guestbook-button"
+              :disabled="submitting || !replyContent.trim() || (!currentUser && !replyGuestName.trim())"
               @click="submitComment(comment.id)"
             >
-              Reply
-            </UButton>
+              {{ submitting ? 'Replying...' : 'Reply' }}
+            </button>
           </div>
         </div>
 
@@ -195,20 +327,53 @@ function toggleReply(id: number) {
                 loading="lazy"
               />
               <div class="comment-author-info">
-                <a :href="reply.author.profileUrl" target="_blank" rel="noreferrer">
-                  {{ reply.author.username }}
-                </a>
+                <div class="author-name-group">
+                  <a
+                    v-if="reply.author.profileUrl"
+                    :href="reply.author.profileUrl"
+                    target="_blank"
+                    rel="noreferrer"
+                    class="author-name-link"
+                  >
+                    {{ reply.author.username }}
+                  </a>
+                  <span v-else class="author-name-static">{{ reply.author.username }}</span>
+
+                  <span
+                    v-if="reply.author.username === siteConfig.adminUsername"
+                    class="author-badge"
+                  >
+                    Author
+                  </span>
+                </div>
                 <time>{{ formatDate(reply.createdAt) }}</time>
               </div>
             </div>
+
             <p class="comment-body">{{ reply.content }}</p>
+
+            <!-- Reaction on Reply -->
+            <div class="comment-actions-bar">
+              <button
+                type="button"
+                class="comment-reaction-btn"
+                :class="{ active: reply.userReacted }"
+                title="Like this reply"
+                @click="toggleCommentReaction(reply)"
+              >
+                <span>{{ reply.userReacted ? '❤️' : '🤍' }}</span>
+                <span v-if="reply.reactionCount > 0" class="comment-reaction-count">
+                  {{ reply.reactionCount }}
+                </span>
+              </button>
+            </div>
           </article>
         </div>
       </article>
     </div>
 
     <p v-else class="blog-comments-empty">
-      No comments yet. Be the first to start the conversation!
+      No comments yet. Be the first to share your thoughts!
     </p>
   </section>
 </template>
