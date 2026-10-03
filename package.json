@@ -19,6 +19,7 @@
     "test:unit": "vitest --project unit",
     "test:nuxt": "vitest --project nuxt",
     "test:e2e": "playwright test",
+    "check:spotify": "node scripts/check-spotify.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {
