@@ -10,9 +10,11 @@ const isBlog = computed(() => route.path.startsWith("/blog"));
 const isGuestbook = computed(() => route.path === "/guestbook");
 const isAdmin = computed(() => route.path.startsWith("/admin"));
 
-const { data: authData } = await useAsyncData<{ user: GuestbookUser | null }>(
+const { data: authData } = await useAsyncData(
   "auth-user",
-  () => $fetch("/api/auth/me").catch(() => ({ user: null })),
+  async () => {
+    return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({ user: null }));
+  },
   { default: () => ({ user: null }) }
 );
 

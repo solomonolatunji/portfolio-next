@@ -10,15 +10,22 @@ import { renderMarkdown } from "@/utils/markdown";
 const route = useRoute();
 const slug = computed(() => route.params.slug as string);
 
-const { data, status, error } = await useAsyncData<{
-  post: BlogPost;
-  comments: BlogComment[];
-  reactions: BlogReactionsSummary;
-}>(`post-${slug.value}`, () => $fetch(`/api/posts/${slug.value}` as string));
+const { data, status, error } = await useAsyncData(
+  `post-${slug.value}`,
+  async () => {
+    return await $fetch<{
+      post: BlogPost;
+      comments: BlogComment[];
+      reactions: BlogReactionsSummary;
+    }>(`/api/posts/${slug.value}` as string);
+  }
+);
 
-const { data: userData } = await useAsyncData<{ user: GuestbookUser | null }>(
+const { data: userData } = await useAsyncData(
   "current-user-post",
-  () => $fetch("/api/auth/me")
+  async () => {
+    return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({ user: null }));
+  }
 );
 
 const post = computed(() => data.value?.post);

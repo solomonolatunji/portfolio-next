@@ -16,14 +16,18 @@ useHead({
 
 const searchQuery = ref("");
 
-const { data: postsData, status, refresh } = await useAsyncData<{ posts: BlogPostSummary[] }>(
+const { data: postsData, status, refresh } = await useAsyncData(
   "blog-posts",
-  () => $fetch("/api/posts")
+  async () => {
+    return await $fetch<{ posts: BlogPostSummary[] }>("/api/posts" as string);
+  }
 );
 
-const { data: userData } = await useAsyncData<{ user: GuestbookUser | null }>(
+const { data: userData } = await useAsyncData(
   "current-user-blog",
-  () => $fetch("/api/auth/me")
+  async () => {
+    return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({ user: null }));
+  }
 );
 
 const posts = computed(() => postsData.value?.posts || []);

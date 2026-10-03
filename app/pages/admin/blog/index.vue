@@ -11,9 +11,11 @@ useHead({
   title: "Admin Blog Management | Solomon Olatunji",
 });
 
-const { data, status, refresh } = await useAsyncData<{ posts: BlogPostSummary[] }>(
+const { data, status, refresh } = await useAsyncData(
   "admin-blog-posts",
-  () => $fetch("/api/admin/posts")
+  async () => {
+    return await $fetch<{ posts: BlogPostSummary[] }>("/api/admin/posts" as string);
+  }
 );
 
 const posts = computed(() => data.value?.posts || []);
