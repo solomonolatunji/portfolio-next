@@ -20,6 +20,7 @@
     "test:nuxt": "vitest --project nuxt",
     "test:e2e": "playwright test",
     "check:spotify": "node scripts/check-spotify.mjs",
+    "check:cloudinary": "node scripts/check-cloudinary.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "@takumi-rs/core": "^2.9.2",
     "@takumi-rs/wasm": "^2.9.2",
     "@tanstack/vue-query": "^5.101.4",
+    "cloudinary": "^2.11.0",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",

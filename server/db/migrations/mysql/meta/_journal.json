@@ -15,6 +15,13 @@
       "when": 1786858181029,
       "tag": "0001_curly_prowler",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1791017525755,
+      "tag": "0002_thin_timeslip",
+      "breakpoints": true
     }
   ]
 }

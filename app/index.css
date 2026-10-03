@@ -707,6 +707,159 @@ a {
   overflow-wrap: anywhere;
 }
 
+.guestbook-entry-signature {
+  margin-top: 0.65rem;
+  display: inline-block;
+}
+
+.guestbook-entry-signature img {
+  display: block;
+  max-height: 70px;
+  max-width: 240px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+}
+
+.signature-pad-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.signature-pad-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.signature-pad-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.signature-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.signature-hint {
+  font-size: 0.7rem;
+  color: var(--soft);
+}
+
+.signature-pad-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.signature-palette {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: 0.2rem;
+}
+
+.palette-chip {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease;
+}
+
+.palette-chip:hover:not(:disabled) {
+  transform: scale(1.18);
+}
+
+.palette-chip.active {
+  transform: scale(1.28);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.signature-sub-btn {
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--soft);
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.4rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+.signature-sub-btn:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.signature-sub-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.signature-clear-btn {
+  color: #fca5a5;
+  border-color: rgba(248, 113, 113, 0.35);
+}
+
+.signature-clear-btn:hover:not(:disabled) {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.signature-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  border-radius: 0.55rem;
+  border: 1px dashed var(--line-strong);
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  touch-action: none;
+  cursor: crosshair;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.signature-canvas-wrapper:hover {
+  border-color: var(--soft);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.signature-canvas-wrapper.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.signature-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.signature-watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--soft);
+  font-size: 0.78rem;
+  opacity: 0.55;
+  user-select: none;
+}
+
 .section-heading {
   display: grid;
   gap: 0.5rem;

@@ -24,6 +24,7 @@ export const guestbookEntries = mysqlTable(
     id: int("id").autoincrement().primaryKey(),
     userId: varchar("user_id", { length: 64 }).notNull(),
     message: varchar("message", { length: 500 }).notNull(),
+    signatureUrl: varchar("signature_url", { length: 2048 }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [index("idx_guestbook_entries_created_at").on(table.createdAt)]

@@ -1,0 +1,1 @@
+ALTER TABLE `guestbook_entries` ADD `signature_url` varchar(2048);

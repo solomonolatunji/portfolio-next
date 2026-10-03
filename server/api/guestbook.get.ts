@@ -8,6 +8,7 @@ export default defineEventHandler(async (_event) => {
     .select({
       id: guestbookEntries.id,
       message: guestbookEntries.message,
+      signatureUrl: guestbookEntries.signatureUrl,
       createdAt: guestbookEntries.createdAt,
       username: users.username,
       avatarUrl: users.avatarUrl,

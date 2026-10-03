@@ -10,3 +10,7 @@ export interface NowPlaying {
   appleMusicUrl?: string;
   youtubeUrl?: string;
 }
+
+export interface NowPlayingResult {
+  track: NowPlaying | null;
+}

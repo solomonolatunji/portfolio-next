@@ -2,27 +2,15 @@
 import { computed, onMounted, ref } from "vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import LogOutIcon from "@/components/icons/LogOutIcon.vue";
+import SignaturePad from "@/components/SignaturePad.vue";
+import type { GuestbookEntry, GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 
-interface User {
-  id: string;
-  username: string;
-  avatarUrl: string | null;
-  profileUrl: string;
-}
-
-interface Entry {
-  id: number;
-  message: string;
-  createdAt: string;
-  username: string;
-  avatarUrl: string | null;
-  profileUrl: string;
-}
-
-const user = ref<User | null>(null);
-const entries = ref<Entry[]>([]);
+const user = ref<GuestbookUser | null>(null);
+const entries = ref<GuestbookEntry[]>([]);
 const message = ref("");
+const signature = ref("");
+const signaturePadRef = ref<InstanceType<typeof SignaturePad> | null>(null);
 const loading = ref(true);
 const submitting = ref(false);
 const error = ref("");
@@ -39,8 +27,8 @@ async function loadGuestbook() {
   error.value = "";
   try {
     const [sessionResult, guestbookResult] = await Promise.allSettled([
-      request<{ user: User | null }>("/api/auth/me"),
-      request<{ entries: Entry[] }>("/api/guestbook"),
+      request<{ user: GuestbookUser | null }>("/api/auth/me"),
+      request<{ entries: GuestbookEntry[] }>("/api/guestbook"),
     ]);
 
     if (sessionResult.status === "fulfilled") {
@@ -75,10 +63,15 @@ async function submitMessage() {
   try {
     await request("/api/guestbook", {
       method: "POST",
-      body: { message: messageToSend },
+      body: {
+        message: messageToSend,
+        signature: signature.value || undefined,
+      },
     });
     if (message.value.trim() === messageToSend) {
       message.value = "";
+      signature.value = "";
+      signaturePadRef.value?.clear();
     }
     await loadGuestbook();
   } catch (submitError: unknown) {
@@ -129,6 +122,11 @@ onMounted(loadGuestbook);
             autoresize
           />
         </UFormField>
+        <SignaturePad
+          ref="signaturePadRef"
+          v-model="signature"
+          :disabled="submitting"
+        />
         <UButton type="submit" :loading="submitting" :disabled="!message.trim()">
           Sign guestbook
         </UButton>
@@ -164,6 +162,13 @@ onMounted(loadGuestbook);
             <time>{{ formatDate(entry.createdAt) }}</time>
           </div>
           <p>{{ entry.message }}</p>
+          <div v-if="entry.signatureUrl" class="guestbook-entry-signature">
+            <img
+              :src="entry.signatureUrl"
+              :alt="`${entry.username}'s signature`"
+              loading="lazy"
+            />
+          </div>
         </div>
       </article>
     </div>

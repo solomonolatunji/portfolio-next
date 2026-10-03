@@ -1,9 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import type { NowPlaying } from "@/interfaces/now-playing";
-
-interface NowPlayingResult {
-  track: NowPlaying | null;
-}
+import type { NowPlaying, NowPlayingResult } from "@/interfaces/now-playing";
 
 export function useNowPlaying() {
   const { data, status, refresh } = useAsyncData<NowPlayingResult>(
