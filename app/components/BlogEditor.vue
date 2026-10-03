@@ -22,6 +22,7 @@ const description = ref(props.post?.description || "");
 const content = ref(props.post?.content || "");
 const featuredImageUrl = ref(props.post?.featuredImageUrl || "");
 const published = ref(props.post ? Boolean(props.post.published) : false);
+const featured = ref(props.post ? Boolean(props.post.featured) : false);
 const allowComments = ref(props.post ? Boolean(props.post.allowComments) : true);
 
 // Editor state
@@ -190,6 +191,7 @@ async function savePost(publishState?: boolean) {
     content: content.value,
     featuredImageUrl: featuredImageUrl.value.trim() || null,
     published: published.value,
+    featured: featured.value,
     allowComments: allowComments.value,
   };
 
@@ -517,6 +519,15 @@ async function savePost(publishState?: boolean) {
               class="publish-checkbox"
             />
             <span>Publish immediately (visible to the public)</span>
+          </label>
+
+          <label class="publish-checkbox-label">
+            <input
+              v-model="featured"
+              type="checkbox"
+              class="publish-checkbox"
+            />
+            <span>⭐ Feature this article (Pin to top of blog, max 3)</span>
           </label>
 
           <label class="publish-checkbox-label">

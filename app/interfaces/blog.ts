@@ -8,6 +8,7 @@ export interface BlogPost {
   content: string;
   featuredImageUrl: string | null;
   published: boolean;
+  featured: boolean;
   allowComments: boolean;
   readTimeMinutes: number;
   views: number;
@@ -22,6 +23,7 @@ export interface BlogPostSummary {
   description: string;
   featuredImageUrl: string | null;
   published: boolean;
+  featured: boolean;
   allowComments: boolean;
   readTimeMinutes: number;
   views: number;
@@ -29,6 +31,19 @@ export interface BlogPostSummary {
   reactionCount: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface BlogPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface BlogPostsResponse {
+  featured: BlogPostSummary[];
+  posts: BlogPostSummary[];
+  pagination: BlogPagination;
 }
 
 export interface BlogCommentAuthor {

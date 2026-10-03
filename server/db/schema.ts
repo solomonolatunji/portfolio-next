@@ -40,6 +40,7 @@ export const posts = mysqlTable(
     content: text("content").notNull(),
     featuredImageUrl: varchar("featured_image_url", { length: 2048 }),
     published: boolean("published").notNull().default(false),
+    featured: boolean("featured").notNull().default(false),
     allowComments: boolean("allow_comments").notNull().default(true),
     readTimeMinutes: int("read_time_minutes").notNull().default(3),
     views: int("views").notNull().default(0),
@@ -49,6 +50,7 @@ export const posts = mysqlTable(
   (table) => [
     uniqueIndex("idx_posts_slug").on(table.slug),
     index("idx_posts_published").on(table.published),
+    index("idx_posts_featured").on(table.featured),
     index("idx_posts_created_at").on(table.createdAt),
   ]
 );

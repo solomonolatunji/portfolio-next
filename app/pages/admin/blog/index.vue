@@ -34,6 +34,18 @@ async function togglePublish(post: BlogPostSummary) {
   }
 }
 
+async function toggleFeatured(post: BlogPostSummary) {
+  try {
+    await $fetch(`/api/admin/posts/${post.id}` as string, {
+      method: "PUT",
+      body: { featured: !post.featured },
+    });
+    await refresh();
+  } catch (err) {
+    console.error("Failed to toggle featured status:", err);
+  }
+}
+
 async function deletePost(post: BlogPostSummary) {
   if (!confirm(`Are you sure you want to delete "${post.title}"? This cannot be undone.`)) {
     return;
@@ -90,6 +102,9 @@ async function deletePost(post: BlogPostSummary) {
             >
               {{ post.published ? 'Published' : 'Draft' }}
             </span>
+            <span v-if="post.featured" class="status-badge is-featured">
+              ⭐ Featured
+            </span>
             <span class="admin-post-date">{{ formatDate(post.createdAt) }}</span>
             <span class="meta-dot">·</span>
             <span>{{ post.views }} views</span>
@@ -106,6 +121,15 @@ async function deletePost(post: BlogPostSummary) {
         </div>
 
         <div class="admin-post-actions">
+          <button
+            type="button"
+            class="admin-action-btn"
+            :class="{ 'featured-active': post.featured }"
+            title="Toggle featured status"
+            @click="toggleFeatured(post)"
+          >
+            {{ post.featured ? '⭐ Unfeature' : '☆ Feature' }}
+          </button>
           <button
             type="button"
             class="admin-action-btn"

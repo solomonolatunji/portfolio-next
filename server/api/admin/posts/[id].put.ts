@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
     content?: string;
     featuredImageUrl?: string;
     published?: boolean;
+    featured?: boolean;
     allowComments?: boolean;
   }>(event);
 
@@ -63,6 +64,7 @@ export default defineEventHandler(async (event) => {
   const featuredImageUrl =
     body?.featuredImageUrl !== undefined ? body.featuredImageUrl.trim() || null : existing.featuredImageUrl;
   const published = body?.published !== undefined ? Boolean(body.published) : existing.published;
+  const featured = body?.featured !== undefined ? Boolean(body.featured) : Boolean(existing.featured);
   const allowComments = body?.allowComments !== undefined ? Boolean(body.allowComments) : Boolean(existing.allowComments);
   const readTimeMinutes = calculateReadTime(content);
 
@@ -75,6 +77,7 @@ export default defineEventHandler(async (event) => {
       content,
       featuredImageUrl,
       published,
+      featured,
       allowComments,
       readTimeMinutes,
     })

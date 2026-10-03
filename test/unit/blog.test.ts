@@ -68,3 +68,22 @@ describe("isAdminUsername", () => {
     expect(isAdminUsername(undefined)).toBe(false);
   });
 });
+
+describe("avatar utils", () => {
+  it("generates dicebear initials url for guests", async () => {
+    const { getDiceBearAvatar, resolveAvatarUrl } = await import("../../app/utils/avatar");
+    const url = getDiceBearAvatar("Jane Doe");
+    expect(url).toContain("https://api.dicebear.com/9.x/initials/svg");
+    expect(url).toContain("seed=Jane%20Doe");
+
+    // Falls back to Guest if empty
+    expect(getDiceBearAvatar("")).toContain("seed=Guest");
+
+    // resolveAvatarUrl returns existing avatar if provided
+    expect(resolveAvatarUrl("John", "https://github.com/john.png")).toBe("https://github.com/john.png");
+
+    // resolveAvatarUrl returns dicebear url if avatar is missing
+    expect(resolveAvatarUrl("Alice", null)).toContain("seed=Alice");
+    expect(resolveAvatarUrl("Bob", "")).toContain("seed=Bob");
+  });
+});

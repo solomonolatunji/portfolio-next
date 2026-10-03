@@ -29,6 +29,7 @@ export default defineEventHandler(async (event) => {
         description: p.description,
         featuredImageUrl: p.featuredImageUrl,
         published: Boolean(p.published),
+        featured: Boolean(p.featured),
         allowComments: Boolean(p.allowComments),
         readTimeMinutes: p.readTimeMinutes,
         views: p.views,
