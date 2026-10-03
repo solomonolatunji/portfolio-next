@@ -1,6 +1,6 @@
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, it } from "vitest";
-import SiteFooter from "@/components/SiteFooter.vue";
+import SiteFooter from "../../app/components/SiteFooter.vue";
 
 describe("SiteFooter", () => {
   it("exposes the guestbook link", async () => {
