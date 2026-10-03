@@ -141,11 +141,10 @@ onMounted(loadGuestbook);
 
     <div v-else-if="!loading" class="guestbook-login guestbook-card">
       <p>Want to leave a message?</p>
-      <!-- eslint-disable-next-line link-checker/valid-route, link-checker/valid-sitemap-link -->
-      <UButton as="a" href="/api/auth/github" class="guestbook-button">
+      <a href="/api/auth/github" class="guestbook-button" rel="external">
         <GitHubIcon />
         Sign in with GitHub
-      </UButton>
+      </a>
     </div>
 
     <p v-if="error" class="guestbook-error" role="alert">{{ error }}</p>
