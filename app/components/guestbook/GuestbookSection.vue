@@ -158,12 +158,12 @@ onMounted(loadGuestbook);
 
     <div
       v-else-if="!loading"
-      class="bg-card border-line shadow-card mb-8 flex flex-col items-center gap-3 rounded-2xl border p-6 text-center"
+      class="border-line mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-[0.85rem] border bg-[rgba(12,12,12,0.7)] p-4"
     >
-      <p class="text-muted m-0 text-sm">Want to leave a message?</p>
+      <p class="text-muted m-0 text-[0.9rem]">Want to leave a message?</p>
       <a
         href="/api/auth/github"
-        class="bg-ink text-bg inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all hover:opacity-90 [&_svg]:size-4 [&_svg]:fill-current"
+        class="border-line-strong text-[#080808] bg-ink hover:opacity-90 inline-flex min-h-[2.45rem] items-center justify-center gap-1.5 rounded-[0.55rem] border px-[0.85rem] py-[0.55rem] text-[0.78rem] font-bold transition-transform hover:-translate-y-px [&_svg]:size-4 [&_svg]:fill-current"
         rel="external"
       >
         <GitHubIcon />
@@ -177,7 +177,7 @@ onMounted(loadGuestbook);
       No messages yet. Be the first to sign!
     </p>
 
-    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div v-else class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
       <GuestbookNote v-for="entry in entries" :key="entry.id" :entry="entry" />
     </div>
   </section>
