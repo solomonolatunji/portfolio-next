@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import type { BlogPost } from "@/interfaces/blog";
 import { renderMarkdown } from "@/utils/markdown";
 import BlogEditorMeta from "@/components/blog/BlogEditorMeta.vue";
@@ -47,13 +47,26 @@ const tabs = [
   { value: "split", label: "Split View" },
 ] as const;
 
+// Automatically generate slug as title is typed
+watch(title, (newTitle) => {
+  if (!slugManual.value) {
+    slug.value = slugify(newTitle);
+  }
+});
+
 function onTitleInput() {
-  if (!slugManual.value) slug.value = slugify(title.value);
+  if (!slugManual.value) {
+    slug.value = slugify(title.value);
+  }
 }
 
 function onSlugInput() {
-  slugManual.value = true;
-  slug.value = slugify(slug.value);
+  if (!slug.value.trim()) {
+    slugManual.value = false;
+    slug.value = slugify(title.value);
+  } else {
+    slugManual.value = true;
+  }
 }
 
 function resetSlugToTitle() {

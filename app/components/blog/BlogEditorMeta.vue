@@ -76,8 +76,9 @@ async function onFileSelected(event: Event) {
             title="Reset to match title"
             @click="emit('reset-slug')"
           >
-            (reset to title)
+            (sync with title)
           </button>
+          <span v-else class="text-soft text-[0.7rem] italic">(auto-generated)</span>
         </div>
         <div class="flex">
           <span
