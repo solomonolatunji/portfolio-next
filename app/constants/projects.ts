@@ -16,7 +16,7 @@ export const projects: Project[] = [
       },
       {
         label: "GitHub",
-        href: "https://github.com/eminisolomon/DevPulse.git",
+        href: "https://github.com/solomonolatunji/DevPulse.git",
       },
       {
         label: "WakaTime",

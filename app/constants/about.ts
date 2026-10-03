@@ -22,8 +22,8 @@ export const activeProducts = [
 export const profileLinks = [
   {
     label: "GitHub",
-    value: "github.com/eminisolomon",
-    href: "https://github.com/eminisolomon",
+    value: "github.com/solomonolatunji",
+    href: "https://github.com/solomonolatunji",
     icon: "github",
   },
   {
@@ -37,6 +37,12 @@ export const profileLinks = [
     value: "@eminisolomon",
     href: "https://twitter.com/eminisolomon",
     icon: "x",
+  },
+  {
+    label: "TikTok",
+    value: "@eminiakinlabi",
+    href: "https://www.tiktok.com/@eminiakinlabi",
+    icon: "tiktok",
   },
   {
     label: "LinkedIn",

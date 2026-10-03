@@ -6,6 +6,7 @@ import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import LinkedInIcon from "@/components/icons/LinkedInIcon.vue";
 import ListeningModal from "@/components/ListeningModal.vue";
 import ListeningBarsIcon from "@/components/icons/ListeningBarsIcon.vue";
+import TikTokIcon from "@/components/icons/TikTokIcon.vue";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon.vue";
 import XIcon from "@/components/icons/XIcon.vue";
 import { useNowPlaying } from "@/composables/useNowPlaying";
@@ -14,6 +15,7 @@ const profileIcons = {
   github: GitHubIcon,
   email: EmailIcon,
   x: XIcon,
+  tiktok: TikTokIcon,
   linkedin: LinkedInIcon,
   whatsapp: WhatsAppIcon,
 } as const;
