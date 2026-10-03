@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
     content?: string;
     featuredImageUrl?: string;
     published?: boolean;
+    allowComments?: boolean;
   }>(event);
 
   const title = body?.title?.trim() || existing.title;
