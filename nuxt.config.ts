@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     download: false,
     inject: true,
     display: "swap",
+    prefetch: false,
   },
   vite: {
     plugins: [tailwindcss()],

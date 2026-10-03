@@ -13,7 +13,7 @@ useHead({
 </script>
 
 <template>
-  <div class="py-2">
+  <div class="mx-auto mt-6 w-full max-w-[760px]">
     <BlogEditor :is-new="true" />
   </div>
 </template>

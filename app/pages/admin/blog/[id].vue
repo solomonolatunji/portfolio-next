@@ -26,7 +26,7 @@ useHead(() => ({
 </script>
 
 <template>
-  <div class="py-2">
+  <div class="mx-auto mt-6 w-full max-w-[760px]">
     <div
       v-if="status === 'pending'"
       class="border-line bg-card/40 text-soft flex items-center justify-center rounded-xl border p-12 text-sm"

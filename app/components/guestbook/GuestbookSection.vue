@@ -9,9 +9,14 @@ import { formatDate } from "@/utils/date";
 
 const user = ref<GuestbookUser | null>(null);
 const entries = ref<GuestbookEntry[]>([]);
-const userEntry = computed(() =>
-  user.value ? entries.value.find((e) => e.user.id === user.value?.id) : null
-);
+const userEntry = computed(() => {
+  if (!user.value) return null;
+  return (
+    entries.value.find((e) =>
+      e.userId ? e.userId === user.value?.id : e.username === user.value?.username
+    ) || null
+  );
+});
 const message = ref("");
 const signature = ref("");
 const signaturePadRef = ref<InstanceType<typeof SignaturePad> | null>(null);

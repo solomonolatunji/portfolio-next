@@ -64,12 +64,15 @@ const {
         </template>
       </div>
 
-      <button
+      <div
         v-if="nowPlaying"
-        type="button"
-        class="border-line hover:border-line-strong text-muted mt-[0.9rem] grid w-full cursor-pointer grid-cols-[auto_1fr] items-start gap-[0.65rem] rounded-[0.85rem] border bg-[rgba(12,12,12,0.7)] p-[0.65rem] text-left transition-colors hover:bg-[rgba(15,15,15,0.8)] sm:mt-4 sm:gap-[0.8rem] sm:p-[0.7rem]"
+        role="button"
+        tabindex="0"
+        class="border-line hover:border-line-strong text-muted focus-visible:ring-line-strong mt-[0.9rem] grid w-full cursor-pointer grid-cols-[auto_1fr] items-start gap-[0.65rem] rounded-[0.85rem] border bg-[rgba(12,12,12,0.7)] p-[0.65rem] text-left transition-colors hover:bg-[rgba(15,15,15,0.8)] focus:outline-none focus-visible:ring-1 sm:mt-4 sm:gap-[0.8rem] sm:p-[0.7rem]"
         aria-label="Open listening details"
         @click="openListeningModal"
+        @keydown.enter.self="openListeningModal"
+        @keydown.space.self.prevent="openListeningModal"
       >
         <img
           v-if="nowPlaying.artworkUrl"
@@ -157,7 +160,7 @@ const {
             </div>
           </div>
         </div>
-      </button>
+      </div>
 
       <div
         v-else-if="nowPlayingLoaded"

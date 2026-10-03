@@ -8,6 +8,7 @@ export interface GuestbookUser {
 
 export interface GuestbookEntry {
   id: number;
+  userId?: string;
   message: string;
   signatureUrl?: string | null;
   createdAt: string;

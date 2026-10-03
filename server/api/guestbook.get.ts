@@ -7,6 +7,7 @@ export default defineEventHandler(async (_event) => {
   const entries = await db
     .select({
       id: guestbookEntries.id,
+      userId: guestbookEntries.userId,
       message: guestbookEntries.message,
       signatureUrl: guestbookEntries.signatureUrl,
       createdAt: guestbookEntries.createdAt,

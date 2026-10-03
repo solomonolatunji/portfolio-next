@@ -63,7 +63,7 @@ async function deletePost(post: BlogPostSummary) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
+  <div class="mx-auto mt-6 flex w-full max-w-[760px] flex-col gap-8">
     <div class="border-line flex flex-wrap items-start justify-between gap-4 border-b pb-6">
       <div>
         <p class="text-soft text-xs font-semibold tracking-wider uppercase">Content Management</p>

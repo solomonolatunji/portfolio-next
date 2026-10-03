@@ -42,7 +42,6 @@ useSeoMeta({
   ogDescription: siteConfig.description,
   ogSiteName: siteConfig.name,
   ogType: "website",
-  twitterCard: "summary",
 });
 </script>
 
