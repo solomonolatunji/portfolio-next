@@ -1,4 +1,16 @@
 import type { MusicEnv } from "./types";
+import {
+  SPOTIFY_SCOPES,
+  basicAuth,
+  fetchJson,
+  fetchSpotifyActiveDevice,
+  fetchSpotifyNowPlaying,
+  fetchSpotifyRecentlyPlayed,
+  invariant,
+  refreshSpotifyAccessToken,
+  type ResolvedLinks,
+  type SpotifyTrackResponse,
+} from "./spotify-client";
 
 export interface NowPlayingPayload {
   isPlaying: boolean;
@@ -13,49 +25,6 @@ export interface NowPlayingPayload {
   youtubeUrl?: string;
 }
 
-interface ResolvedLinks {
-  appleMusicUrl?: string;
-  youtubeUrl?: string;
-}
-
-interface SpotifyTrackResponse {
-  is_playing: boolean;
-  device?: {
-    name?: string;
-    type?: string;
-  };
-  item?: {
-    name: string;
-    external_urls?: { spotify?: string };
-    album?: {
-      name?: string;
-      images?: Array<{ url: string }>;
-    };
-    artists?: Array<{ name: string }>;
-    external_ids?: { isrc?: string };
-  };
-}
-
-interface SpotifyRecentTracksResponse {
-  items?: Array<{
-    track?: SpotifyTrackResponse["item"];
-  }>;
-}
-
-interface SpotifyDevicesResponse {
-  devices?: Array<{
-    id?: string | null;
-    is_active?: boolean;
-    name?: string;
-    type?: string;
-  }>;
-}
-
-const SPOTIFY_SCOPES = [
-  "user-read-currently-playing",
-  "user-read-playback-state",
-  "user-read-recently-played",
-];
 const RESOLVED_LINKS_CACHE = new Map<string, ResolvedLinks>();
 
 const DEVICE_NAME_MAP: Record<string, string> = {
@@ -77,63 +46,15 @@ const DEVICE_NAME_MAP: Record<string, string> = {
   "web player": "Web Player",
 };
 
-function invariant(value: string | undefined, name: string) {
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
-  }
-
-  return value;
-}
-
-async function fetchJson<T>(
-  url: string,
-  init?: {
-    method?: string;
-    headers?: Record<string, string>;
-    body?: URLSearchParams | string;
-  }
-): Promise<T> {
-  const response = await fetch(url, {
-    method: init?.method || "GET",
-    headers: init?.headers,
-    body: init?.body,
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`${response.status} ${response.statusText}: ${text}`);
-  }
-
-  return response.json() as Promise<T>;
-}
-
-function basicAuth(clientId: string, clientSecret: string) {
-  return btoa(`${clientId}:${clientSecret}`);
-}
-
 function normalizeDeviceLabel(value?: string) {
-  if (!value) {
-    return undefined;
-  }
-
+  if (!value) return undefined;
   const normalized = value.trim();
   const lookup = DEVICE_NAME_MAP[normalized.toLowerCase()];
-
-  if (lookup) {
-    return lookup;
-  }
+  if (lookup) return lookup;
 
   return normalized
     .split(/\s+/)
-    .map((part) => {
-      const mapped = DEVICE_NAME_MAP[part.toLowerCase()];
-
-      if (mapped) {
-        return mapped;
-      }
-
-      return part.charAt(0).toUpperCase() + part.slice(1);
-    })
+    .map((part) => DEVICE_NAME_MAP[part.toLowerCase()] || (part.charAt(0).toUpperCase() + part.slice(1)))
     .join(" ");
 }
 
@@ -177,85 +98,6 @@ export async function exchangeSpotifyCodeForRefreshToken(code: string, env: Musi
   });
 }
 
-async function refreshSpotifyAccessToken(env: MusicEnv) {
-  const clientId = invariant(env.SPOTIFY_CLIENT_ID, "SPOTIFY_CLIENT_ID");
-  const clientSecret = invariant(env.SPOTIFY_CLIENT_SECRET, "SPOTIFY_CLIENT_SECRET");
-  const refreshToken = invariant(env.SPOTIFY_REFRESH_TOKEN, "SPOTIFY_REFRESH_TOKEN");
-
-  const body = new URLSearchParams({
-    grant_type: "refresh_token",
-    refresh_token: refreshToken,
-  });
-
-  const response = await fetchJson<{
-    access_token: string;
-    token_type: string;
-    expires_in: number;
-  }>("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basicAuth(clientId, clientSecret)}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body,
-  });
-
-  return response.access_token;
-}
-
-async function fetchSpotifyNowPlaying(accessToken: string) {
-  const response = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  if (response.status === 204) {
-    return null;
-  }
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`${response.status} ${response.statusText}: ${text}`);
-  }
-
-  return (await response.json()) as SpotifyTrackResponse;
-}
-
-async function fetchSpotifyRecentlyPlayed(accessToken: string) {
-  const response = await fetch("https://api.spotify.com/v1/me/player/recently-played?limit=1", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  if (response.status === 401 || response.status === 403) {
-    return null;
-  }
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`${response.status} ${response.statusText}: ${text}`);
-  }
-
-  const data = (await response.json()) as SpotifyRecentTracksResponse;
-  return data.items?.[0]?.track ?? null;
-}
-
-async function fetchSpotifyActiveDevice(accessToken: string) {
-  const response = await fetch("https://api.spotify.com/v1/me/player/devices", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  if (response.status === 401 || response.status === 403) {
-    return null;
-  }
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`${response.status} ${response.statusText}: ${text}`);
-  }
-
-  const data = (await response.json()) as SpotifyDevicesResponse;
-  return data.devices?.find((device) => device.is_active) ?? null;
-}
-
 function buildAppleMusicUrl(title: string, artist: string) {
   const term = `${title} ${artist}`;
   return `https://music.apple.com/us/search?term=${encodeURIComponent(term)}`;
@@ -267,20 +109,13 @@ function buildYouTubeMusicUrl(title: string, artist: string) {
 }
 
 function buildTrackCacheKey(isrc: string | undefined, title: string, artist: string) {
-  if (isrc) {
-    return `isrc:${isrc}`;
-  }
-
-  return `search:${title.toLowerCase()}::${artist.toLowerCase()}`;
+  return isrc ? `isrc:${isrc}` : `search:${title.toLowerCase()}::${artist.toLowerCase()}`;
 }
 
 async function resolveLinksForTrack(isrc: string | undefined, title: string, artist: string) {
   const cacheKey = buildTrackCacheKey(isrc, title, artist);
   const cached = RESOLVED_LINKS_CACHE.get(cacheKey);
-
-  if (cached) {
-    return cached;
-  }
+  if (cached) return cached;
 
   const resolved = {
     appleMusicUrl: buildAppleMusicUrl(title, artist),
@@ -296,9 +131,7 @@ async function buildNowPlayingPayload(
   isPlaying: boolean,
   device?: SpotifyTrackResponse["device"]
 ) {
-  if (!track?.name || !track.external_urls?.spotify) {
-    return null;
-  }
+  if (!track?.name || !track.external_urls?.spotify) return null;
 
   const title = track.name;
   const artist = track.artists?.map((entry) => entry.name).join(", ") || "Unknown artist";

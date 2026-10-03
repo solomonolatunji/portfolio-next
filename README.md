@@ -40,43 +40,10 @@ npm install
 
 ### 2. Environment Setup
 
-Copy `.env.example` to `.env`:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```bash
 cp .env.example .env
-```
-
-Configure your credentials:
-
-```bash
-# Database
-MYSQL_URL=mysql://user:password@localhost:3306/portfolio
-
-# Authentication (GitHub OAuth for admin and sign-ins)
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-
-# Open-Source Friendly Admin & Site Configuration
-ADMIN_GITHUB_USERNAME=solomonolatunji
-NUXT_PUBLIC_SITE_NAME="Solomon Olatunji"
-NUXT_PUBLIC_SITE_SHORT_NAME="SO"
-NUXT_PUBLIC_SITE_URL="https://solomonolatunji.com"
-
-# Cloudinary (for Blog images and Guestbook signatures)
-CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
-# Or individual variables:
-# CLOUDINARY_CLOUD_NAME=
-# CLOUDINARY_API_KEY=
-# CLOUDINARY_API_SECRET=
-
-# Spotify Integration
-SPOTIFY_CLIENT_ID=your_spotify_client_id
-SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
-SPOTIFY_REFRESH_TOKEN=your_spotify_refresh_token
-SPOTIFY_REDIRECT_URI=http://localhost:3000/spotify/callback
-
-# SEO & Social Cards
-NUXT_OG_IMAGE_SECRET=
 ```
 
 Generate a stable production secret for OG images with:

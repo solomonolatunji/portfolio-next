@@ -1,0 +1,266 @@
+.site-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.7rem;
+  padding-top: 3rem;
+  color: var(--soft);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer-link {
+  color: var(--text);
+  transition: color 160ms ease;
+}
+
+.site-footer-link:hover {
+  color: #ffffff;
+}
+
+.guestbook-section {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding-top: 1rem;
+  flex: 1;
+}
+
+.guestbook-back-link {
+  display: inline-block;
+  color: var(--muted);
+  font-size: 0.85rem;
+  transition: color 160ms ease;
+}
+
+.guestbook-back-link:hover {
+  color: var(--text);
+}
+
+.guestbook-heading {
+  margin-top: 4rem;
+}
+
+.guestbook-heading .section-copy {
+  max-width: 32rem;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.guestbook-card {
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: rgba(12, 12, 12, 0.7);
+}
+
+.guestbook-user-row,
+.guestbook-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.guestbook-user-row {
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.guestbook-user-row strong {
+  display: block;
+  font-size: 0.88rem;
+}
+
+.guestbook-avatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  object-fit: cover;
+}
+
+.guestbook-text-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--soft);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.guestbook-text-button:hover {
+  color: var(--text);
+}
+
+.guestbook-card textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  outline: none;
+  background: #080808;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.guestbook-card textarea:focus {
+  border-color: var(--line-strong);
+}
+
+.guestbook-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.9rem;
+  margin-top: 0.65rem;
+}
+
+.guestbook-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 2.45rem;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.55rem;
+  background: var(--text);
+  color: #080808;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  gap: 0.4rem;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.guestbook-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.guestbook-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.guestbook-login {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.guestbook-login p,
+.guestbook-entry p {
+  margin: 0;
+}
+
+.guestbook-login p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.guestbook-error {
+  margin: 1rem 0 0;
+  color: #e9a7a7;
+  font-size: 0.82rem;
+}
+
+.guestbook-empty {
+  margin: 2rem 0 0;
+  color: var(--soft);
+  font-size: 0.88rem;
+}
+
+.guestbook-entries {
+  margin-top: 2rem;
+}
+
+.guestbook-entry {
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.guestbook-entry:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.guestbook-entry-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.guestbook-entry-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.guestbook-entry-meta a {
+  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.guestbook-entry-meta a:hover {
+  text-decoration: underline;
+}
+
+.guestbook-entry-meta time {
+  color: var(--soft);
+  font-size: 0.72rem;
+}
+
+.guestbook-entry p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.guestbook-entry-signature {
+  margin-top: 0.65rem;
+  display: inline-block;
+}
+
+.guestbook-entry-signature img {
+  display: block;
+  max-height: 70px;
+  max-width: 240px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+}
+
+.signature-pad-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.25rem;
+}
+
+.signature-pad-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}

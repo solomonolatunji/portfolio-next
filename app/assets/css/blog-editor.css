@@ -1,0 +1,167 @@
+/* Blog Editor Styles */
+.blog-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.editor-title-group h2 {
+  margin: 0.3rem 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.back-link {
+  font-size: 0.8rem;
+  color: var(--soft);
+  transition: color 150ms ease;
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.editor-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.editor-field.flex-1 {
+  flex: 1;
+  min-width: 220px;
+}
+
+.editor-field.flex-2 {
+  flex: 2;
+  min-width: 280px;
+}
+
+.editor-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.74rem;
+  color: #60a5fa;
+  cursor: pointer;
+}
+
+.text-link-btn:hover {
+  text-decoration: underline;
+}
+
+.slug-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.slug-prefix {
+  padding: 0 0.65rem;
+  font-size: 0.82rem;
+  color: var(--soft);
+  user-select: none;
+}
+
+.slug-input {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding-left: 0 !important;
+}
+
+.featured-image-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.featured-url-input {
+  flex: 1;
+  min-width: 240px;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.featured-preview-box {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin-top: 0.5rem;
+}
+
+.featured-preview-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.remove-image-btn:hover {
+  background: rgba(220, 38, 38, 0.85);
+}
+
+.editor-toggles-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}

@@ -3,7 +3,7 @@ import { defineConfig } from "@playwright/test";
 import type { ConfigOptions } from "@nuxt/test-utils/playwright";
 
 export default defineConfig<ConfigOptions>({
-  testDir: "./tests",
+  testDir: "./test/e2e",
   use: {
     nuxt: {
       rootDir: fileURLToPath(new URL(".", import.meta.url)),
