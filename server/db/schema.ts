@@ -1,4 +1,4 @@
-import { int, index, mysqlTable, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, int, index, mysqlTable, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
   id: varchar("id", { length: 64 }).primaryKey(),
@@ -28,4 +28,58 @@ export const guestbookEntries = mysqlTable(
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (table) => [index("idx_guestbook_entries_created_at").on(table.createdAt)]
+);
+
+export const posts = mysqlTable(
+  "posts",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    slug: varchar("slug", { length: 255 }).notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: varchar("description", { length: 500 }).notNull(),
+    content: text("content").notNull(),
+    featuredImageUrl: varchar("featured_image_url", { length: 2048 }),
+    published: boolean("published").notNull().default(false),
+    readTimeMinutes: int("read_time_minutes").notNull().default(3),
+    views: int("views").notNull().default(0),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  },
+  (table) => [
+    uniqueIndex("idx_posts_slug").on(table.slug),
+    index("idx_posts_published").on(table.published),
+    index("idx_posts_created_at").on(table.createdAt),
+  ]
+);
+
+export const postComments = mysqlTable(
+  "post_comments",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    postId: int("post_id").notNull(),
+    userId: varchar("user_id", { length: 64 }).notNull(),
+    parentId: int("parent_id"),
+    content: varchar("content", { length: 1000 }).notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_post_comments_post_id").on(table.postId),
+    index("idx_post_comments_parent_id").on(table.parentId),
+    index("idx_post_comments_created_at").on(table.createdAt),
+  ]
+);
+
+export const postReactions = mysqlTable(
+  "post_reactions",
+  {
+    id: int("id").autoincrement().primaryKey(),
+    postId: int("post_id").notNull(),
+    userId: varchar("user_id", { length: 64 }).notNull(),
+    reactionType: varchar("reaction_type", { length: 32 }).notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("idx_post_reactions_unique").on(table.postId, table.userId, table.reactionType),
+    index("idx_post_reactions_post_id").on(table.postId),
+  ]
 );

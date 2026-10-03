@@ -3,6 +3,7 @@ export interface GuestbookUser {
   username: string;
   avatarUrl: string | null;
   profileUrl: string;
+  isAdmin?: boolean;
 }
 
 export interface GuestbookEntry {

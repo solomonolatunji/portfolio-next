@@ -19,8 +19,6 @@
     "test:unit": "vitest --project unit",
     "test:nuxt": "vitest --project nuxt",
     "test:e2e": "playwright test",
-    "check:spotify": "node scripts/check-spotify.mjs",
-    "check:cloudinary": "node scripts/check-cloudinary.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -36,6 +34,7 @@
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
+    "marked": "^18.0.14",
     "mysql2": "^3.23.3",
     "nuxt": "^4.5.2",
     "nuxt-og-image": "^6.7.8",

@@ -46,3 +46,26 @@ export async function uploadSignatureToCloudinary(dataUri: string): Promise<stri
 
   return response.secure_url;
 }
+
+export async function uploadBlogImageToCloudinary(
+  dataUri: string,
+  folder = "portfolio/blog"
+): Promise<{ url: string; publicId: string }> {
+  if (!isCloudinaryConfigured()) {
+    throw new Error(
+      "Cloudinary is not configured. Please set CLOUDINARY_URL or (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET)."
+    );
+  }
+
+  configureCloudinary();
+
+  const response = await cloudinary.uploader.upload(dataUri, {
+    folder,
+    resource_type: "image",
+  });
+
+  return {
+    url: response.secure_url,
+    publicId: response.public_id,
+  };
+}

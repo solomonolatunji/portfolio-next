@@ -13,6 +13,7 @@ export interface GuestbookUser {
   username: string;
   avatarUrl: string | null;
   profileUrl: string;
+  isAdmin?: boolean;
 }
 
 function required(value: string | undefined, name: string) {
