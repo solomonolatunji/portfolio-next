@@ -14,7 +14,9 @@ export default defineEventHandler(async (event) => {
   const code = typeof query.code === "string" ? query.code : null;
   const state = typeof query.state === "string" ? query.state : null;
   if (!code || !state || state !== getOAuthState(event)) {
-    throw createError({ statusCode: 400, statusMessage: "Invalid GitHub login session." });
+    const url = new URL("/guestbook", getRequestURL(event));
+    url.searchParams.set("error", "Invalid or expired GitHub login session. Please try again.");
+    return sendRedirect(event, url.toString(), 302);
   }
 
   try {
