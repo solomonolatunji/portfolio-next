@@ -29,7 +29,7 @@ export function formatDate(value: string | number | Date | null | undefined): st
     }
 
     if (Number.isNaN(date.getTime())) {
-      const fallback = new Date(value as any);
+      const fallback = new Date(value);
       if (!Number.isNaN(fallback.getTime())) {
         return format(fallback);
       }

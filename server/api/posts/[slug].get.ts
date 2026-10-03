@@ -1,7 +1,7 @@
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "#server/db";
 import { commentReactions, postComments, postReactions, posts, users } from "#server/db/schema";
-import { isAdminUsername } from "#server/utils/admin";
+import { isAdminUser } from "#server/utils/admin";
 import { getVisitorOrUser } from "#server/utils/visitor";
 
 export default defineEventHandler(async (event) => {
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const actor = await getVisitorOrUser(event);
-  const isUserAdmin = actor.user ? isAdminUsername(actor.user.username) : false;
+  const isUserAdmin = actor.user ? isAdminUser(actor.user) : false;
 
   if (!post.published && !isUserAdmin) {
     throw createError({ statusCode: 404, statusMessage: "Blog post not found." });

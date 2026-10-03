@@ -1,6 +1,5 @@
 import { and, eq, gt } from "drizzle-orm";
-import { getCookie, getRequestURL, setCookie } from "h3";
-import type { H3Event } from "h3";
+import type { H3Event } from "nitropack/types";
 import { getDb } from "#server/db";
 import { sessions, users } from "#server/db/schema";
 import type { GuestbookEnv } from "./types";
@@ -26,7 +25,7 @@ async function hash(value: string) {
   return Array.from(new Uint8Array(buffer), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-function isSecure(event: H3Event) {
+export function isSecure(event: H3Event) {
   return getRequestURL(event).protocol === "https:";
 }
 

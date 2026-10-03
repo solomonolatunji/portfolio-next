@@ -2,9 +2,9 @@
 import { computed, ref } from "vue";
 import type { BlogPost } from "@/interfaces/blog";
 import { renderMarkdown } from "@/utils/markdown";
-import BlogEditorMeta from "@/components/BlogEditorMeta.vue";
-import BlogEditorToolbar from "@/components/BlogEditorToolbar.vue";
-import BlogProse from "@/components/BlogProse.vue";
+import BlogEditorMeta from "@/components/blog/BlogEditorMeta.vue";
+import BlogEditorToolbar from "@/components/blog/BlogEditorToolbar.vue";
+import BlogProse from "@/components/blog/BlogProse.vue";
 import {
   slugify,
   wrapMarkdownSelection,
@@ -80,8 +80,10 @@ async function handleInlineUpload(file: File) {
     const url = await uploadImageToCloudinary(file);
     const alt = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
     onWrapSelection(`![${alt}](`, `${url})`, "");
-  } catch (err: any) {
-    errorMessage.value = err?.data?.message || err?.message || "Failed to upload inline image.";
+  } catch (err: unknown) {
+    const errorObj = err as { data?: { message?: string }; message?: string };
+    errorMessage.value =
+      errorObj.data?.message || errorObj.message || "Failed to upload inline image.";
   } finally {
     isUploadingInline.value = false;
   }
@@ -125,9 +127,16 @@ async function savePost(publishState?: boolean) {
       successMessage.value = "Article updated successfully!";
       router.push(`/admin/blog`);
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorObj = err as {
+      data?: { message?: string; statusMessage?: string };
+      message?: string;
+    };
     errorMessage.value =
-      err?.data?.message || err?.data?.statusMessage || err?.message || "Failed to save post.";
+      errorObj.data?.message ||
+      errorObj.data?.statusMessage ||
+      errorObj.message ||
+      "Failed to save post.";
   } finally {
     isSubmitting.value = false;
   }

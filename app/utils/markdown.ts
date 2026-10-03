@@ -11,7 +11,7 @@ marked.use({
   },
 });
 
-export function renderMarkdown(content: string): string {
+export function renderMarkdown(content?: string | null): string {
   if (!content) return "";
   try {
     return marked.parse(content, {

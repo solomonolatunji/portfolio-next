@@ -4,7 +4,7 @@ import type { BlogComment } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 
-const siteConfig = useSiteConfig();
+const siteConfig = usePortfolioConfig();
 
 const props = defineProps<{
   comment: BlogComment;

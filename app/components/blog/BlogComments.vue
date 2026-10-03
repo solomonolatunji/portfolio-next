@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
-import BlogCommentItem from "@/components/BlogCommentItem.vue";
+import BlogCommentItem from "@/components/blog/BlogCommentItem.vue";
 import type { BlogComment } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 

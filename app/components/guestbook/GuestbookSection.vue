@@ -2,13 +2,16 @@
 import { computed, onMounted, ref } from "vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import LogOutIcon from "@/components/icons/LogOutIcon.vue";
-import SignaturePad from "@/components/SignaturePad.vue";
-import GuestbookNote from "@/components/GuestbookNote.vue";
+import SignaturePad from "@/components/guestbook/SignaturePad.vue";
+import GuestbookNote from "@/components/guestbook/GuestbookNote.vue";
 import type { GuestbookEntry, GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 
 const user = ref<GuestbookUser | null>(null);
 const entries = ref<GuestbookEntry[]>([]);
+const userEntry = computed(() =>
+  user.value ? entries.value.find((e) => e.user.id === user.value?.id) : null
+);
 const message = ref("");
 const signature = ref("");
 const signaturePadRef = ref<InstanceType<typeof SignaturePad> | null>(null);
@@ -105,7 +108,12 @@ onMounted(loadGuestbook);
       <div class="mb-4 flex items-center gap-3">
         <UAvatar v-if="user.avatarUrl" :src="user.avatarUrl" :alt="user.username" size="md" />
         <div class="flex flex-1 items-center justify-between">
-          <strong class="text-ink text-sm font-semibold">{{ user.username }}</strong>
+          <div>
+            <strong class="text-ink text-sm font-semibold">{{ user.username }}</strong>
+            <p v-if="userEntry" class="text-soft mt-0.5 text-xs">
+              You've already signed the guestbook ✨
+            </p>
+          </div>
           <button
             type="button"
             class="text-soft inline-flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0 text-xs transition-colors hover:text-red-400"
@@ -116,7 +124,15 @@ onMounted(loadGuestbook);
           </button>
         </div>
       </div>
-      <form class="flex flex-col gap-4" @submit.prevent="submitMessage">
+
+      <div v-if="userEntry" class="border-line/60 bg-elevated/60 rounded-xl border p-4">
+        <p class="text-muted mb-2 text-xs">
+          Each user is entitled to one guestbook note. Here is yours:
+        </p>
+        <GuestbookNote :entry="userEntry" class="border-line/40 bg-card" />
+      </div>
+
+      <form v-else class="flex flex-col gap-4" @submit.prevent="submitMessage">
         <UFormField label="Message" name="message" required>
           <UTextarea
             v-model="message"

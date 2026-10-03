@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
-import SiteFooter from "@/components/SiteFooter.vue";
+import SiteFooter from "@/components/layout/SiteFooter.vue";
 import { profileLinks } from "@/constants/about";
 import type { GuestbookUser } from "@/interfaces/guestbook";
-const siteConfig = useSiteConfig();
+const siteConfig = usePortfolioConfig();
+const requestFetch = useRequestFetch();
 
 const route = useRoute();
 const isHome = computed(() => route.path === "/");
@@ -14,9 +15,11 @@ const isAdmin = computed(() => route.path.startsWith("/admin"));
 const { data: authData } = await useAsyncData(
   "auth-user",
   async () => {
-    return await $fetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(() => ({
-      user: null,
-    }));
+    return await requestFetch<{ user: GuestbookUser | null }>("/api/auth/me" as string).catch(
+      () => ({
+        user: null,
+      })
+    );
   },
   { default: () => ({ user: null }) }
 );

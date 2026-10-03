@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import BlogEditor from "@/components/BlogEditor.vue";
+import BlogEditor from "@/components/blog/BlogEditor.vue";
 import type { BlogPost } from "@/interfaces/blog";
 
-const siteConfig = useSiteConfig();
+const siteConfig = usePortfolioConfig();
 
 definePageMeta({
   middleware: "admin",

@@ -34,8 +34,9 @@ async function onFileSelected(event: Event) {
   try {
     const url = await uploadImageToCloudinary(file);
     emit("update:featuredImageUrl", url);
-  } catch (err: any) {
-    uploadError.value = err?.data?.message || err?.message || "Failed to upload image.";
+  } catch (err: unknown) {
+    const errorObj = err as { data?: { message?: string }; message?: string };
+    uploadError.value = errorObj.data?.message || errorObj.message || "Failed to upload image.";
   } finally {
     isUploading.value = false;
     if (fileInputRef.value) fileInputRef.value.value = "";

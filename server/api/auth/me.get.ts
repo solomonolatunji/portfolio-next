@@ -1,5 +1,5 @@
 import { getGuestbookSession } from "#server/utils/guestbook";
-import { isAdminUsername } from "#server/utils/admin";
+import { isAdminUser } from "#server/utils/admin";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
       user: user
         ? {
             ...user,
-            isAdmin: isAdminUsername(user.username),
+            isAdmin: isAdminUser(user),
           }
         : null,
     };

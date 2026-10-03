@@ -1,4 +1,3 @@
-import { getQuery, getRequestURL, sendRedirect } from "h3";
 import { getServerEnv } from "#server/utils/env";
 import {
   createSession,
@@ -13,8 +12,16 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event);
   const code = typeof query.code === "string" ? query.code : null;
   const state = typeof query.state === "string" ? query.state : null;
+
+  const redirectCookie = getCookie(event, "oauth_redirect");
+  deleteCookie(event, "oauth_redirect", { path: "/" });
+  const target =
+    redirectCookie && redirectCookie.startsWith("/") && !redirectCookie.startsWith("//")
+      ? redirectCookie
+      : "/guestbook";
+
   if (!code || !state || state !== getOAuthState(event)) {
-    const url = new URL("/guestbook", getRequestURL(event));
+    const url = new URL(target, getRequestURL(event));
     url.searchParams.set("error", "Invalid or expired GitHub login session. Please try again.");
     return sendRedirect(event, url.toString(), 302);
   }
@@ -25,9 +32,9 @@ export default defineEventHandler(async (event) => {
     const user = await fetchGithubUser(accessToken);
     const session = await createSession(user);
     setSessionCookie(event, session.token);
-    return sendRedirect(event, new URL("/guestbook", getRequestURL(event)).toString(), 302);
+    return sendRedirect(event, new URL(target, getRequestURL(event)).toString(), 302);
   } catch (error: unknown) {
-    const url = new URL("/guestbook", getRequestURL(event));
+    const url = new URL(target, getRequestURL(event));
     url.searchParams.set("error", errorMessage(error, "GitHub login failed."));
     return sendRedirect(event, url.toString(), 302);
   }

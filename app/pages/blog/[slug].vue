@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import BlogComments from "@/components/BlogComments.vue";
-import BlogReactions from "@/components/BlogReactions.vue";
+import BlogComments from "@/components/blog/BlogComments.vue";
+import BlogReactions from "@/components/blog/BlogReactions.vue";
 import type { BlogPost, BlogComment, BlogReactionsSummary } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 import { renderMarkdown } from "@/utils/markdown";
-const siteConfig = useSiteConfig();
+const siteConfig = usePortfolioConfig();
 
 const route = useRoute();
 const slug = computed(() => route.params.slug as string);

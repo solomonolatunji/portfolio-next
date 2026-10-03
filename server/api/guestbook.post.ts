@@ -1,4 +1,3 @@
-import { readBody } from "h3";
 import { and, count, eq, gt } from "drizzle-orm";
 import { getDb } from "#server/db";
 import { guestbookEntries } from "#server/db/schema";
@@ -24,20 +23,19 @@ export default defineEventHandler(async (event) => {
       statusCode: 400,
       statusMessage: `Messages must be ${MAX_MESSAGE_LENGTH} characters or fewer.`,
     });
-  const recent = await db
-    .select({ count: count() })
+  const [existing] = await db
+    .select({ id: guestbookEntries.id })
     .from(guestbookEntries)
-    .where(
-      and(
-        eq(guestbookEntries.userId, user.id),
-        gt(guestbookEntries.createdAt, new Date(Date.now() - 60 * 60 * 1000))
-      )
-    );
-  if (Number(recent[0]?.count || 0) >= 5)
+    .where(eq(guestbookEntries.userId, user.id))
+    .limit(1);
+
+  if (existing) {
     throw createError({
-      statusCode: 429,
-      statusMessage: "You can leave up to five messages per hour.",
+      statusCode: 400,
+      statusMessage:
+        "You have already signed the guestbook. Each user is entitled to only one entry.",
     });
+  }
 
   let signatureUrl: string | null = null;
   if (body?.signature && typeof body.signature === "string") {

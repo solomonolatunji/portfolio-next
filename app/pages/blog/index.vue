@@ -2,10 +2,10 @@
 import { computed, ref, watch } from "vue";
 import type { BlogPostSummary, BlogPostsResponse } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
-import BlogFeaturedHero from "@/components/BlogFeaturedHero.vue";
-import BlogPostCard from "@/components/BlogPostCard.vue";
-import BlogPagination from "@/components/BlogPagination.vue";
-const siteConfig = useSiteConfig();
+import BlogFeaturedHero from "@/components/blog/BlogFeaturedHero.vue";
+import BlogPostCard from "@/components/blog/BlogPostCard.vue";
+import BlogPagination from "@/components/blog/BlogPagination.vue";
+const siteConfig = usePortfolioConfig();
 
 useHead({
   title: siteConfig.pageTitle("Blog"),

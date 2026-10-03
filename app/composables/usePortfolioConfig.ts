@@ -1,4 +1,6 @@
-export function useSiteConfig() {
+import { formatPageTitle } from "~/utils/site";
+
+export function usePortfolioConfig() {
   const { public: publicConfig } = useRuntimeConfig();
 
   return {

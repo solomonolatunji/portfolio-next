@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import type { BlogPostSummary } from "@/interfaces/blog";
 import { formatDate } from "@/utils/date";
 
-const siteConfig = useSiteConfig();
+const siteConfig = usePortfolioConfig();
 
 definePageMeta({
   middleware: "admin",

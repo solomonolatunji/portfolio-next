@@ -4,7 +4,7 @@ import { aboutData, activeProducts, profileLinks } from "@/constants/about";
 import EmailIcon from "@/components/icons/EmailIcon.vue";
 import GitHubIcon from "@/components/icons/GitHubIcon.vue";
 import LinkedInIcon from "@/components/icons/LinkedInIcon.vue";
-import ListeningModal from "@/components/ListeningModal.vue";
+import ListeningModal from "@/components/music/ListeningModal.vue";
 import ListeningBarsIcon from "@/components/icons/ListeningBarsIcon.vue";
 import TikTokIcon from "@/components/icons/TikTokIcon.vue";
 import WhatsAppIcon from "@/components/icons/WhatsAppIcon.vue";

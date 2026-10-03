@@ -30,8 +30,8 @@ describe("renderMarkdown", () => {
 
   it("handles empty or falsy markdown gracefully", () => {
     expect(renderMarkdown("")).toBe("");
-    expect(renderMarkdown(null as any)).toBe("");
-    expect(renderMarkdown(undefined as any)).toBe("");
+    expect(renderMarkdown(null)).toBe("");
+    expect(renderMarkdown(undefined)).toBe("");
   });
 });
 
@@ -46,7 +46,7 @@ describe("formatPageTitle", () => {
   });
 });
 
-describe("isAdminUsername", () => {
+describe("isAdminUsername & isAdminUser", () => {
   it("recognizes default admin username", () => {
     expect(isAdminUsername(DEFAULT_ADMIN_USERNAME)).toBe(true);
     expect(isAdminUsername("SOLOMONOLATUNJI")).toBe(true);
@@ -59,6 +59,38 @@ describe("isAdminUsername", () => {
     expect(isAdminUsername("")).toBe(false);
     expect(isAdminUsername(null)).toBe(false);
     expect(isAdminUsername(undefined)).toBe(false);
+  });
+
+  it("recognizes admin user via profileUrl or display name", async () => {
+    const { isAdminUser, extractGithubHandle } = await import("~~/server/utils/admin");
+    expect(extractGithubHandle("https://github.com/solomonolatunji")).toBe("solomonolatunji");
+    expect(extractGithubHandle("https://github.com/solomonolatunji/")).toBe("solomonolatunji");
+    expect(extractGithubHandle(null)).toBe(null);
+
+    // Matches via profileUrl even if username is full name
+    expect(
+      isAdminUser({
+        username: "Solomon Olatunji",
+        profileUrl: "https://github.com/solomonolatunji",
+      })
+    ).toBe(true);
+
+    // Matches via handle username
+    expect(
+      isAdminUser({
+        username: "solomonolatunji",
+        profileUrl: "https://github.com/someone-else",
+      })
+    ).toBe(true);
+
+    // Rejects non-admin user
+    expect(
+      isAdminUser({
+        username: "Jane Doe",
+        profileUrl: "https://github.com/janedoe",
+      })
+    ).toBe(false);
+    expect(isAdminUser(null)).toBe(false);
   });
 });
 
