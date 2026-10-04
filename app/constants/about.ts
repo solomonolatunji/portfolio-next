@@ -35,7 +35,7 @@ export const profileLinks = [
   {
     label: "X",
     value: "@eminisolomon",
-    href: "https://twitter.com/eminisolomon",
+    href: "https://x.com/eminisolomon",
     icon: "x",
   },
   {

@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "#server/db";
 import {
   categories,
@@ -182,6 +182,35 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  // 3. Fetch Prev and Next Published Posts
+  let prevPost: { title: string; slug: string } | null = null;
+  let nextPost: { title: string; slug: string } | null = null;
+
+  if (post.published) {
+    const [older] = await db
+      .select({
+        title: posts.title,
+        slug: posts.slug,
+      })
+      .from(posts)
+      .where(and(eq(posts.published, true), sql`${posts.createdAt} < ${post.createdAt}`))
+      .orderBy(desc(posts.createdAt))
+      .limit(1);
+
+    const [newer] = await db
+      .select({
+        title: posts.title,
+        slug: posts.slug,
+      })
+      .from(posts)
+      .where(and(eq(posts.published, true), sql`${posts.createdAt} > ${post.createdAt}`))
+      .orderBy(asc(posts.createdAt))
+      .limit(1);
+
+    prevPost = older || null;
+    nextPost = newer || null;
+  }
+
   return {
     post: {
       ...post,
@@ -206,5 +235,7 @@ export default defineEventHandler(async (event) => {
       userReactions,
       total: reactions.length,
     },
+    prevPost,
+    nextPost,
   };
 });

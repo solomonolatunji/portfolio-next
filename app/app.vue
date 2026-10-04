@@ -34,7 +34,15 @@ useHead(() => ({
       : isAdmin.value
         ? siteConfig.pageTitle("Admin Blog")
         : siteConfig.pageTitle(),
-  link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+  link: [
+    { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+    {
+      rel: "alternate",
+      type: "application/rss+xml",
+      title: siteConfig.name,
+      href: "/rss.xml",
+    },
+  ],
 }));
 
 useSeoMeta({

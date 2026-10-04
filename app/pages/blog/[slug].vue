@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import BlogAdjacentNav from "@/components/blog/BlogAdjacentNav.vue";
 import BlogComments from "@/components/blog/BlogComments.vue";
 import BlogReactions from "@/components/blog/BlogReactions.vue";
+import BlogShare from "@/components/blog/BlogShare.vue";
 import type { BlogPost, BlogComment, BlogReactionsSummary } from "@/interfaces/blog";
 import type { GuestbookUser } from "@/interfaces/guestbook";
 import { formatDate } from "@/utils/date";
 import { renderMarkdown } from "@/utils/markdown";
-const siteConfig = usePortfolioConfig();
 
+const siteConfig = usePortfolioConfig();
 const route = useRoute();
 const slug = computed(() => route.params.slug as string);
 
@@ -16,6 +18,8 @@ const { data, status, error } = await useAsyncData(`post-${slug.value}`, async (
     post: BlogPost;
     comments: BlogComment[];
     reactions: BlogReactionsSummary;
+    prevPost?: { title: string; slug: string } | null;
+    nextPost?: { title: string; slug: string } | null;
   }>(`/api/posts/${slug.value}` as string);
 });
 
@@ -35,10 +39,35 @@ const reactions = computed(
       total: 0,
     }
 );
+const prevPost = computed(() => data.value?.prevPost || null);
+const nextPost = computed(() => data.value?.nextPost || null);
 const currentUser = computed(() => userData.value?.user || null);
 
 const htmlContent = computed(() => {
   return post.value ? renderMarkdown(post.value.content) : "";
+});
+
+// Reading depth progress bar
+const readingProgress = ref(0);
+
+function updateReadingProgress() {
+  if (typeof window === "undefined") return;
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (docHeight <= 0) {
+    readingProgress.value = 0;
+    return;
+  }
+  readingProgress.value = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
+}
+
+onMounted(() => {
+  window.addEventListener("scroll", updateReadingProgress, { passive: true });
+  updateReadingProgress();
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", updateReadingProgress);
 });
 
 useHead(() => ({
@@ -57,6 +86,13 @@ useSeoMeta({
 
 <template>
   <div class="mx-auto mt-6 flex w-full max-w-190 flex-col gap-6">
+    <!-- Top Reading Depth Progress Indicator -->
+    <div
+      v-if="post"
+      class="bg-ink fixed top-0 left-0 z-50 h-[2px] transition-[width] duration-75"
+      :style="{ width: `${readingProgress}%` }"
+    />
+
     <div>
       <NuxtLink
         to="/blog"
@@ -139,6 +175,9 @@ useSeoMeta({
       <!-- Markdown Content Body -->
       <BlogProse :content="htmlContent" />
 
+      <!-- Share & Copy Controls -->
+      <BlogShare :title="post.title" :slug="post.slug" />
+
       <!-- Reaction Bar (Available for all posts) -->
       <div class="border-line/60 my-6 border-y py-6">
         <BlogReactions
@@ -147,6 +186,9 @@ useSeoMeta({
           :current-user="currentUser"
         />
       </div>
+
+      <!-- Adjacent Articles (Previous / Next Navigation) -->
+      <BlogAdjacentNav :prev-post="prevPost" :next-post="nextPost" />
 
       <!-- Comments & Discussion (Only if enabled for this post) -->
       <BlogComments
