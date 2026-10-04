@@ -27,6 +27,7 @@ const router = useRouter();
 const title = ref(props.post?.title || "");
 const slug = ref(props.post?.slug || "");
 const slugManual = ref(!props.isNew && Boolean(props.post?.slug));
+const categoryId = ref(props.post?.categoryId || "engineering");
 const description = ref(props.post?.description || "");
 const content = ref(props.post?.content || "");
 const featuredImageUrl = ref(props.post?.featuredImageUrl || "");
@@ -48,26 +49,17 @@ const tabs = [
   { value: "split", label: "Split View" },
 ] as const;
 
-// Automatically generate slug as title is typed
 watch(title, (newTitle) => {
-  if (!slugManual.value) {
-    slug.value = slugify(newTitle);
-  }
+  if (!slugManual.value) slug.value = slugify(newTitle);
 });
 
 function onTitleInput() {
-  if (!slugManual.value) {
-    slug.value = slugify(title.value);
-  }
+  if (!slugManual.value) slug.value = slugify(title.value);
 }
 
 function onSlugInput() {
-  if (!slug.value.trim()) {
-    slugManual.value = false;
-    slug.value = slugify(title.value);
-  } else {
-    slugManual.value = true;
-  }
+  slugManual.value = Boolean(slug.value.trim());
+  if (!slugManual.value) slug.value = slugify(title.value);
 }
 
 function resetSlugToTitle() {
@@ -75,17 +67,15 @@ function resetSlugToTitle() {
   slug.value = slugify(title.value);
 }
 
-const renderedPreview = computed(() => {
-  return renderMarkdown(content.value || "*Nothing to preview yet.*");
-});
+const renderedPreview = computed(() =>
+  renderMarkdown(content.value || "*Nothing to preview yet.*")
+);
 
-function onWrapSelection(prefix: string, suffix = "", defaultText = "text") {
+const onWrapSelection = (prefix: string, suffix = "", defaultText = "text") =>
   wrapMarkdownSelection(textareaRef.value, content, prefix, suffix, defaultText);
-}
 
-function onInsertLinePrefix(prefix: string) {
+const onInsertLinePrefix = (prefix: string) =>
   insertMarkdownLinePrefix(textareaRef.value, content, prefix);
-}
 
 async function handleInlineUpload(file: File) {
   isUploadingInline.value = true;
@@ -95,25 +85,16 @@ async function handleInlineUpload(file: File) {
     const alt = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
     onWrapSelection(`![${alt}](`, `${url})`, "");
   } catch (err: unknown) {
-    const errorObj = err as { data?: { message?: string }; message?: string };
-    errorMessage.value =
-      errorObj.data?.message || errorObj.message || "Failed to upload inline image.";
+    const errObj = err as { data?: { message?: string }; message?: string };
+    errorMessage.value = errObj.data?.message || errObj.message || "Upload failed.";
   } finally {
     isUploadingInline.value = false;
   }
 }
 
-async function savePost(publishState?: boolean) {
-  if (publishState !== undefined) {
-    published.value = publishState;
-    submittingAction.value = publishState ? "publish" : "draft";
-  } else {
-    submittingAction.value = published.value ? "publish" : "draft";
-  }
-
-  if (!title.value.trim()) {
-    errorMessage.value = "Title is required.";
-    submittingAction.value = null;
+async function savePost(explicitPublish?: boolean) {
+  if (!title.value.trim() || !slug.value.trim()) {
+    errorMessage.value = "Article title and URL slug are required.";
     return;
   }
 
@@ -121,9 +102,17 @@ async function savePost(publishState?: boolean) {
   errorMessage.value = null;
   successMessage.value = null;
 
+  if (explicitPublish !== undefined) {
+    published.value = explicitPublish;
+    submittingAction.value = explicitPublish ? "publish" : "draft";
+  } else {
+    submittingAction.value = published.value ? "publish" : "draft";
+  }
+
   const payload = {
     title: title.value.trim(),
-    slug: slug.value.trim() || slugify(title.value),
+    slug: slug.value.trim(),
+    categoryId: categoryId.value,
     description: description.value.trim(),
     content: content.value,
     featuredImageUrl: featuredImageUrl.value.trim() || null,
@@ -149,15 +138,9 @@ async function savePost(publishState?: boolean) {
       router.push(`/admin/blog`);
     }
   } catch (err: unknown) {
-    const errorObj = err as {
-      data?: { message?: string; statusMessage?: string };
-      message?: string;
-    };
+    const errObj = err as { data?: { message?: string; statusMessage?: string }; message?: string };
     errorMessage.value =
-      errorObj.data?.message ||
-      errorObj.data?.statusMessage ||
-      errorObj.message ||
-      "Failed to save post.";
+      errObj.data?.message || errObj.data?.statusMessage || errObj.message || "Failed to save.";
   } finally {
     isSubmitting.value = false;
     submittingAction.value = null;
@@ -207,6 +190,7 @@ async function savePost(publishState?: boolean) {
       <BlogEditorMeta
         v-model:title="title"
         v-model:slug="slug"
+        v-model:category-id="categoryId"
         v-model:description="description"
         v-model:featured-image-url="featuredImageUrl"
         :slug-manual="slugManual"
@@ -218,33 +202,33 @@ async function savePost(publishState?: boolean) {
       <div class="flex w-full flex-col gap-2">
         <div class="flex items-center justify-between">
           <label class="text-muted text-xs font-semibold">Article Content (Markdown)</label>
-
-          <div class="border-line bg-card flex gap-1 rounded-lg border p-1">
-            <UButton
-              v-for="tab in tabs"
-              :key="tab.value"
-              size="xs"
-              color="neutral"
-              :variant="activeTab === tab.value ? 'soft' : 'ghost'"
-              :class="tab.value === 'split' ? 'hidden md:inline-flex' : ''"
-              @click="activeTab = tab.value"
+          <div class="flex items-center gap-1">
+            <button
+              v-for="t in tabs"
+              :key="t.value"
+              type="button"
+              class="cursor-pointer rounded-md px-2.5 py-1 text-xs transition-colors"
+              :class="
+                activeTab === t.value
+                  ? 'bg-elevated text-ink font-semibold'
+                  : 'text-soft hover:text-ink'
+              "
+              @click="activeTab = t.value"
             >
-              {{ tab.label }}
-            </UButton>
+              {{ t.label }}
+            </button>
           </div>
         </div>
 
         <BlogEditorToolbar
-          v-if="activeTab !== 'preview'"
-          :is-uploading-inline="isUploadingInline"
+          :is-uploading="isUploadingInline"
           @wrap="onWrapSelection"
-          @insert-prefix="onInsertLinePrefix"
-          @upload-inline="handleInlineUpload"
+          @prefix="onInsertLinePrefix"
+          @upload="handleInlineUpload"
         />
 
         <div
-          class="border-line bg-card flex min-h-[400px] flex-col overflow-hidden rounded-b-lg border md:flex-row"
-          :class="activeTab === 'preview' ? 'rounded-t-lg' : 'border-t-0'"
+          class="border-line bg-card flex min-h-[420px] flex-col overflow-hidden rounded-xl border md:flex-row"
         >
           <div
             v-show="activeTab === 'write' || activeTab === 'split'"

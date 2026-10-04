@@ -121,6 +121,12 @@ async function deletePost(post: BlogPostSummary) {
               {{ post.published ? "Published" : "Draft" }}
             </span>
             <span
+              v-if="post.category"
+              class="border-border/40 bg-elevated/40 text-muted rounded-full border px-2 py-0.5 text-[0.65rem] font-medium"
+            >
+              {{ post.category.name }}
+            </span>
+            <span
               v-if="post.featured"
               class="rounded-full border border-yellow-500/20 bg-yellow-500/10 px-2 py-0.5 font-medium text-yellow-400"
             >

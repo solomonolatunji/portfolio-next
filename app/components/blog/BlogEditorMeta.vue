@@ -6,6 +6,7 @@ const props = defineProps<{
   title: string;
   slug: string;
   slugManual: boolean;
+  categoryId: string;
   description: string;
   featuredImageUrl: string;
 }>();
@@ -13,6 +14,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "update:title", val: string): void;
   (e: "update:slug", val: string): void;
+  (e: "update:categoryId", val: string): void;
   (e: "update:description", val: string): void;
   (e: "update:featuredImageUrl", val: string): void;
   (e: "title-input"): void;
@@ -46,8 +48,8 @@ async function onFileSelected(event: Event) {
 
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Title & Slug Row -->
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <!-- Title & Slug & Category Row -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
       <div class="md:col-span-2">
         <label for="post-title" class="text-muted mb-1.5 block text-xs font-semibold"
           >Article Title</label
@@ -76,29 +78,46 @@ async function onFileSelected(event: Event) {
             title="Reset to match title"
             @click="emit('reset-slug')"
           >
-            (sync with title)
+            (sync)
           </button>
-          <span v-else class="text-soft text-[0.7rem] italic">(auto-generated)</span>
+          <span v-else class="text-soft text-[0.7rem] italic">(auto)</span>
         </div>
         <div class="flex">
           <span
-            class="border-line bg-elevated text-soft inline-flex items-center rounded-l-lg border border-r-0 px-2.5 text-xs"
+            class="border-line bg-elevated text-soft inline-flex items-center rounded-l-lg border border-r-0 px-2 text-xs"
           >
-            /blog/
+            /
           </span>
           <input
             id="post-slug"
             :value="slug"
             type="text"
-            placeholder="designing-scalable-systems"
+            placeholder="designing-systems"
             required
-            class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong w-full rounded-r-lg border px-3 py-2 text-sm focus:outline-none"
+            class="border-line bg-card text-ink placeholder:text-soft focus:border-line-strong w-full rounded-r-lg border px-2.5 py-2 text-sm focus:outline-none"
             @input="
               emit('update:slug', ($event.target as HTMLInputElement).value);
               emit('slug-input');
             "
           />
         </div>
+      </div>
+
+      <div>
+        <label for="post-category" class="text-muted mb-1.5 block text-xs font-semibold">
+          Category
+        </label>
+        <select
+          id="post-category"
+          :value="categoryId"
+          class="border-line bg-card text-ink focus:border-line-strong w-full rounded-lg border px-3 py-2 text-sm focus:outline-none"
+          @change="emit('update:categoryId', ($event.target as HTMLSelectElement).value)"
+        >
+          <option value="engineering">Engineering & Systems</option>
+          <option value="startups">Startups & Capital</option>
+          <option value="philosophy">Philosophy & Reason</option>
+          <option value="mindset">Mindset & Life</option>
+        </select>
       </div>
     </div>
 
