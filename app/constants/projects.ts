@@ -2,6 +2,55 @@ import type { Project } from "@/interfaces/portfolio";
 
 export const projects: Project[] = [
   {
+    id: "13",
+    title: "Codedock",
+    year: "2026",
+    category: "systems",
+    featured: true,
+    description:
+      "Open-source self-hosted PaaS. Turns any VPS into your own private Vercel or Railway in 60 seconds with 1-click database provisioning and Docker/Nixpacks deployments.",
+    technologies: ["Go", "Docker", "TypeScript", "React", "Echo", "PostgreSQL", "Redis"],
+    links: [
+      {
+        label: "Live",
+        href: "https://codedock.run",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/buildwithtechx/codedock",
+      },
+    ],
+  },
+  {
+    id: "12",
+    title: "Outpipe",
+    year: "2026",
+    category: "systems",
+    featured: true,
+    description:
+      "High-performance tunneling platform for exposing local and private services through secure public endpoints with Go relays, CLI, React dashboard, and Tauri desktop client.",
+    technologies: [
+      "Go",
+      "WebSockets",
+      "Fiber",
+      "TypeScript",
+      "React",
+      "Tauri",
+      "PostgreSQL",
+      "Redis",
+    ],
+    links: [
+      {
+        label: "Live",
+        href: "https://outpipe.dev",
+      },
+      {
+        label: "GitHub",
+        href: "https://github.com/buildwithtechx/outpipe",
+      },
+    ],
+  },
+  {
     id: "11",
     title: "DevPulse",
     year: "2026",

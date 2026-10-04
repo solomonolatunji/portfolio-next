@@ -9,6 +9,7 @@ const categoryLabels: Record<string, string> = {
   web: "Web",
   mobile: "Mobile",
   ui: "UI",
+  systems: "Systems / DevTools",
 };
 
 const projectLinkIcons = {

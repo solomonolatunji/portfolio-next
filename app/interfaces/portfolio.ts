@@ -7,7 +7,7 @@ export interface Project {
   id: string;
   title: string;
   year: string;
-  category: "web" | "mobile" | "ui";
+  category: "web" | "mobile" | "ui" | "systems";
   description: string;
   featured?: boolean;
   technologies: string[];
