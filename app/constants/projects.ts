@@ -53,7 +53,7 @@ export const projects: Project[] = [
   {
     id: "11",
     title: "DevPulse",
-    year: "2026",
+    year: "2025",
     category: "mobile",
     featured: true,
     description: "Open-source WakaTime mobile client built with React Native and Expo.",
