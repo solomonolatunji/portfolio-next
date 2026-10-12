@@ -41,7 +41,6 @@ export default defineNuxtConfig({
     spotifyRedirectUri: "",
     public: {
       siteName: "Solomon Olatunji",
-      siteShortName: "SO",
       siteUrl: "https://solomonolatunji.com",
       adminUsername: (process.env.ADMIN_GITHUB_USERNAME || "solomonolatunji").split(",")[0]!.trim(),
     },

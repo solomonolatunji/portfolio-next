@@ -5,7 +5,6 @@ export function usePortfolioConfig() {
 
   return {
     name: publicConfig.siteName,
-    shortName: publicConfig.siteShortName,
     url: publicConfig.siteUrl,
     adminUsername: publicConfig.adminUsername,
     description: "Software engineer building useful products.",

@@ -22,7 +22,6 @@ export const env = createEnv({
 
   client: {
     NUXT_PUBLIC_SITE_NAME: z.string().min(1).optional(),
-    NUXT_PUBLIC_SITE_SHORT_NAME: z.string().min(1).optional(),
     NUXT_PUBLIC_SITE_URL: z.string().min(1).optional(),
   },
 
