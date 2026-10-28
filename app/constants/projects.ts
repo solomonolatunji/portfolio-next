@@ -74,6 +74,21 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: "14",
+    title: "KM Kiosk",
+    year: "2025",
+    category: "mobile",
+    description:
+      "Childcare centre sign-in and sign-out kiosk app compliant with Australian Government regulations.",
+    technologies: ["React Native", "TypeScript", "Android"],
+    links: [
+      {
+        label: "Google Play",
+        href: "https://play.google.com/store/apps/details?id=com.kmkioskapp&hl=en_IN",
+      },
+    ],
+  },
+  {
     id: "1",
     title: "TakeNTrade",
     year: "2024",
